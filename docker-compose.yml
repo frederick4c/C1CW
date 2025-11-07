@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: ./backend  # Tells Docker to build using the ./backend folder
+    ports:
+      - "8000:8000"       # Maps your computer's port 8000 to the container's port 8000
+    volumes:
+      - ./backend:/app    # Mounts your backend code into the container for live-reloading
+    working_dir: /app     # Sets the default directory inside the container
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: ./frontend # Tells Docker to build using the ./frontend folder
+    ports:
+      - "3000:3000"       # Maps your computer's port 3000 to the container's port 3000
+    volumes:
+      - ./frontend:/app   # Mounts your frontend code for live-reloading
+      # We also add a an "anonymous volume" for node_modules
+      # This prevents the host's node_modules (if any) from overwriting the container's
+      - /app/node_modules
+      - /app/.next
+    working_dir: /app
+    command: npm run dev
+    depends_on:
+      - backend           # Tells Docker to start the backend before the frontend
