@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 # --- Global Objects ---
 
-# This dictionary will hold your loaded model(s).
+# Dictionary to hold loaded model(s).
 # Loading them into memory at startup is much faster than loading on every request.
 models: Dict[str, Any] = {}
 

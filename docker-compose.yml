@@ -13,9 +13,9 @@ services:
     build:
       context: ./frontend # Tells Docker to build using the ./frontend folder
     ports:
-      - "3000:3000"       # Maps your computer's port 3000 to the container's port 3000
+      - "3000:3000"       # Maps port 3000 to the container's port 3000
     volumes:
-      - ./frontend:/app   # Mounts your frontend code for live-reloading
+      - ./frontend:/app   # Mounts frontend code for live-reloading
       # We also add a an "anonymous volume" for node_modules
       # This prevents the host's node_modules (if any) from overwriting the container's
       - /app/node_modules
