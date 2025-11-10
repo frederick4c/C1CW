@@ -1,5 +1,14 @@
 # Ignore the virtual environment
-venv/ apienv/
+venv/
+apivenv/
 
 # Ignore Python's cache
-pycache/ *.pyc
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Ignore other files
+*.log
+.env

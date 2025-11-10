@@ -3,7 +3,31 @@ from typing import Any, Dict, List
 
 import uvicorn
 from fastapi import BackgroundTasks, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+
+# --- FastAPI App ---
+
+# Initialize the FastAPI app
+app = FastAPI(
+    title="C1 Courswork - Neural Network API",
+    description="An API to serve a machine learning model for predictions. By Fred - fl482",
+    version="1.0.0",
+)
+
+# Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Test endpoint
+@app.get("/api/test")
+async def test_endpoint():
+    return {"message": "Hello from the backend!"}
 
 # --- Global Objects ---
 
@@ -136,16 +160,6 @@ class TrainingStatus(BaseModel):
     job_id: str | None = None
 
 
-# --- FastAPI App ---
-
-# Initialize the FastAPI app
-app = FastAPI(
-    title="C1 Courswork - Neural Network API",
-    description="An API to serve a machine learning model for predictions. By Fred - fl482",
-    version="1.0.0",
-)
-
-
 # --- Lifecycle Events ---
 
 @app.on_event("startup")
@@ -250,20 +264,16 @@ async def train_model(
     # Return an immediate response to the client
     return TrainingStatus(
         message="Model training started in the background.",
-        job_id="some_unique_job_id_123" # You could generate a real ID here
+        job_id="some_unique_job_id_123"  # You could generate a real ID here
     )
 
 
 # --- Main execution ---
-
+# Run the application if this file is executed directly
 if __name__ == "__main__":
-    """
-    This allows you to run the app directly for development:
-    $ python main.py
-    """
     uvicorn.run(
-        "main:app", 
-        host="0.0.0.0", 
-        port=8000, 
-        reload=True # 'reload=True' auto-restarts on code changes
+        "main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True  # auto-restarts on code changes
     )
