@@ -1,26 +1,50 @@
 services:
   backend:
     build:
-      context: ./backend  # Tells Docker to build using the ./backend folder
+      context: ./backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: signal-lab-backend
     ports:
-      - "8000:8000"       # Maps your computer's port 8000 to the container's port 8000
-    volumes:
-      - ./backend:/app    # Mounts your backend code into the container for live-reloading
-    working_dir: /app     # Sets the default directory inside the container
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - signal-lab-network
 
   frontend:
     build:
-      context: ./frontend # Tells Docker to build using the ./frontend folder
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: runner
+    container_name: signal-lab-frontend
     ports:
-      - "3000:3000"       # Maps port 3000 to the container's port 3000
-    volumes:
-      - ./frontend:/app   # Mounts frontend code for live-reloading
-      # We also add a an "anonymous volume" for node_modules
-      # This prevents the host's node_modules (if any) from overwriting the container's
-      - /app/node_modules
-      - /app/.next
-    working_dir: /app
-    command: npm run dev
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
     depends_on:
-      - backend           # Tells Docker to start the backend before the frontend
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - signal-lab-network
+
+networks:
+  signal-lab-network:
+    driver: bridge       # Tells Docker to start the backend before the frontend
