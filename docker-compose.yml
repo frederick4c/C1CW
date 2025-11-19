@@ -4,7 +4,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       target: production
-    container_name: signal-lab-backend
+    container_name: interpolater-backend
     ports:
       - "8000:8000"
     environment:
@@ -18,14 +18,14 @@ services:
       start_period: 10s
     restart: unless-stopped
     networks:
-      - signal-lab-network
+      - interpolater-network
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       target: runner
-    container_name: signal-lab-frontend
+    container_name: interpolater-frontend
     ports:
       - "3000:3000"
     environment:
@@ -43,8 +43,8 @@ services:
       start_period: 10s
     restart: unless-stopped
     networks:
-      - signal-lab-network
+      -  interpolater-network
 
 networks:
-  signal-lab-network:
+  interpolater-network:
     driver: bridge       # Tells Docker to start the backend before the frontend

@@ -34,11 +34,18 @@ async def health_check():
 async def test_endpoint():
     return {"message": "Hello from the backend!"}
 
+from fivedreg.data import load_dataset
+import shutil
+import os
+from fastapi import UploadFile, File
+
 # --- Global Objects ---
 
 # Dictionary to hold loaded model(s).
 # Loading them into memory at startup is much faster than loading on every request.
 models: Dict[str, Any] = {}
+# Global variable to hold the loaded dataset
+loaded_data: Dict[str, Any] = {"X": None, "y": None}
 
 
 # --- Placeholder Functions ---
@@ -271,6 +278,36 @@ async def train_model(
         message="Model training started in the background.",
         job_id="some_unique_job_id_123"  # You could generate a real ID here
     )
+
+
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    """
+    Endpoint to upload a dataset file (.pkl).
+    The file is saved and then loaded into memory.
+    """
+    try:
+        file_location = f"data/{file.filename}"
+        with open(file_location, "wb+") as file_object:
+            shutil.copyfileobj(file.file, file_object)
+            
+        # Load the dataset
+        X, y = load_dataset(file_location)
+        
+        # Update global state
+        loaded_data["X"] = X
+        loaded_data["y"] = y
+        
+        return {
+            "message": f"File '{file.filename}' uploaded and loaded successfully.",
+            "data_shape": {
+                "X": X.shape,
+                "y": y.shape
+            }
+        }
+    except Exception as e:
+        print(f"Error uploading file: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to upload and load data: {str(e)}")
 
 
 # --- Main execution ---
