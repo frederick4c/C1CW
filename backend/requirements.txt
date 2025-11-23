@@ -6,4 +6,5 @@ numpy
 scipy
 matplotlib
 pandas
-python-multipart 
+python-multipart
+tensorflow 
