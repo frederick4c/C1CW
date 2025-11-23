@@ -1,0 +1,11 @@
+image: python:3.12
+
+stages:
+  - test
+
+test_backend:
+  stage: test
+  script:
+    - pip install -r backend/requirements.txt
+    - export PYTHONPATH=$PYTHONPATH:$(pwd)
+    - pytest -s backend/tests

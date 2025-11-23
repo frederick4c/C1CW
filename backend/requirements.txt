@@ -7,4 +7,6 @@ scipy
 matplotlib
 pandas
 python-multipart
-tensorflow 
+tensorflow
+httpx
+pytest 

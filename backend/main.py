@@ -34,9 +34,11 @@ async def health_check():
 async def test_endpoint():
     return {"message": "Hello from the backend!"}
 
-from fivedreg.data import load_dataset
+from fivedreg.data import load_dataset, split_data, standardize_data
+from fivedreg.model import FiveDNet
 import shutil
 import os
+import numpy as np
 from fastapi import UploadFile, File
 
 # --- Global Objects ---
@@ -54,52 +56,53 @@ loaded_data: Dict[str, Any] = {"X": None, "y": None}
 def load_model(model_path: str) -> Any:
     """
     Loads your neural network model from a file path.
-    This could be a .h5, .pth, .pkl, or any other format.
     """
     print(f"Loading model from {model_path}...")
-    # --- YOUR CODE GOES HERE ---
-    # Example (commented out):
-    # import tensorflow as tf
-    # model = tf.keras.models.load_model(model_path)
-    #
-    # import torch
-    # model = MyModelClass()
-    # model.load_state_dict(torch.load(model_path))
-    # model.eval()
     
-    # Using a simple mock object for this template
-    mock_model = {"name": "MyMockModel", "version": 1.0, "path": model_path}
-    print("Mock model 'loaded' successfully.")
-    return mock_model
+    if not os.path.exists(model_path):
+        print(f"Model file {model_path} not found.")
+        return None
+
+    try:
+        model = FiveDNet()
+        model.load(model_path)
+        print("Model loaded successfully.")
+        return model
+    except Exception as e:
+        print(f"Failed to load model: {e}")
+        return None
 
 
 def run_prediction(model: Any, features: List[float], config: Dict | None) -> tuple[Any, float]:
     """
     Runs the actual prediction using the loaded model.
     """
-    print(f"Running prediction with model: {model['name']}")
+    print(f"Running prediction...")
     print(f"Input features: {features}")
     
-    # --- YOUR CODE GOES HERE ---
-    # Example (commented out):
-    # 1. Preprocess the input data (e.g., scaling, one-hot encoding)
-    #    processed_input = my_preprocessor.transform([features])
-    #
-    # 2. Run the model prediction
-    #    raw_prediction = model.predict(processed_input)
-    #
-    # 3. Postprocess the output
-    #    # e.g., get the class with the highest probability
-    #    class_index = raw_prediction.argmax()
-    #    confidence = raw_prediction[0][class_index]
-    #    final_prediction = {"class": class_index, "label": "MyLabel"}
-
-    # Using mock results for this template
-    mock_result = {"class": "A", "value": 0.987}
-    mock_confidence = 0.987
+    # Convert features to numpy array and reshape
+    features_arr = np.array(features).reshape(1, -1)
     
-    print(f"Prediction complete: {mock_result}")
-    return mock_result, mock_confidence
+    # TODO: In a real scenario, we should save the scaler during training and load it here
+    # to transform the input features. For now, we assume features are pre-scaled or 
+    # we might need to implement scaler persistence. 
+    # For this coursework, we'll pass raw features if scaler isn't available, 
+    # but ideally we should standardize.
+    
+    try:
+        prediction = model.predict(features_arr)
+        # Prediction is a numpy array, take the first element
+        result = float(prediction[0])
+        
+        # Confidence is not typically applicable for regression in the same way as classification
+        # We can return 1.0 or some other metric if needed, or just None/0.0
+        confidence = 1.0 
+        
+        print(f"Prediction complete: {result}")
+        return result, confidence
+    except Exception as e:
+        print(f"Prediction failed: {e}")
+        raise e
 
 
 def start_training_job(data_path: str):
@@ -107,32 +110,43 @@ def start_training_job(data_path: str):
     A long-running function to train or fine-tune a model.
     This runs in the background.
     """
-    print(f"Starting long training job with data from {data_path}...")
+    print(f"Starting training job with data from {data_path}...")
     
-    # --- YOUR CODE GOES HERE ---
-    # Example (commented out):
-    # 1. Load training data
-    #    (X_train, y_train) = load_data(data_path)
-    #
-    # 2. Get the model
-    #    model = models.get("my_nn_model")
-    #
-    # 3. Run the training
-    #    model.fit(X_train, y_train, epochs=10, batch_size=32)
-    #
-    # 4. Save the newly trained model
-    #    model.save("path/to/new_model.h5")
-    
-    # Simulate a long task (e.g., 5 minutes)
-    time.sleep(300) 
-    
-    print("Training job finished.")
-    
-    # After training, you probably want to reload the new model
-    # This automatically makes it available for /predict requests
-    print("Reloading model with new weights...")
-    models["my_nn_model"] = load_model("path/to/new_model.h5")
-    print("Model reloaded and ready.")
+    try:
+        # 1. Load data
+        # If data_path is default or doesn't exist, try to use loaded_data
+        if (not os.path.exists(data_path) or data_path == "path/to/default/training_data.csv") and loaded_data["X"] is not None:
+             print("Using pre-loaded data from memory.")
+             X = loaded_data["X"]
+             y = loaded_data["y"]
+        elif os.path.exists(data_path):
+             print(f"Loading data from {data_path}")
+             X, y = load_dataset(data_path)
+        else:
+             print("No valid data found for training.")
+             return
+
+        # 2. Prepare data
+        X_train, y_train, X_val, y_val, X_test, y_test = split_data(X, y)
+        X_train_scaled, X_val_scaled, X_test_scaled = standardize_data(X_train, X_val, X_test)
+        
+        # 3. Initialize and train model
+        print("Initializing and training FiveDNet...")
+        model = FiveDNet(hidden_layers=[64, 32, 16], max_epochs=50, verbose=1)
+        model.fit(X_train_scaled, y_train, validation_split=0.2)
+        
+        # 4. Save the model
+        model_save_path = "saved_model.keras"
+        model.save(model_save_path)
+        print(f"Model saved to {model_save_path}")
+        
+        # 5. Reload the model
+        print("Reloading model with new weights...")
+        models["my_nn_model"] = load_model(model_save_path)
+        print("Model reloaded and ready.")
+        
+    except Exception as e:
+        print(f"Training failed: {e}")
 
 
 # --- Pydantic Schemas (Data Validation) ---
@@ -149,7 +163,7 @@ class PredictionInput(BaseModel):
         # This adds a sample for the /docs page
         json_schema_extra = {
             "example": {
-                "feature_vector": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+                "feature_vector": [0.1, 0.2, 0.3, 0.4, 0.5],
                 "config": {"use_gpu": True}
             }
         }
@@ -182,7 +196,7 @@ async def startup_event():
     print("--- App Startup ---")
     # Define the model you want to load
     # You could load multiple models here
-    models["my_nn_model"] = load_model("path/to/my_model.h5")
+    models["my_nn_model"] = load_model("saved_model.keras")
     print("---------------------")
 
 
@@ -287,6 +301,7 @@ async def upload_file(file: UploadFile = File(...)):
     The file is saved and then loaded into memory.
     """
     try:
+        os.makedirs("data", exist_ok=True)
         file_location = f"data/{file.filename}"
         with open(file_location, "wb+") as file_object:
             shutil.copyfileobj(file.file, file_object)
