@@ -87,26 +87,89 @@ def split_data(X, y, train_ratio=0.7, val_ratio=0.15, test_ratio=0.15, seed=42):
     
     return X_train, y_train, X_val, y_val, X_test, y_test
 
-def standardize_data(X_train, X_val, X_test):
+import json
+
+class Scaler:
+    def __init__(self):
+        self.mean = None
+        self.std = None
+        
+    def fit(self, X):
+        """
+        Computes the mean and std to be used for later scaling.
+        """
+        self.mean = np.mean(X, axis=0)
+        self.std = np.std(X, axis=0)
+        # Avoid division by zero
+        self.std[self.std == 0] = 1.0
+        
+    def transform(self, X):
+        """
+        Performs standardization by centering and scaling.
+        """
+        if self.mean is None or self.std is None:
+            raise ValueError("Scaler has not been fitted yet.")
+        return (X - self.mean) / self.std
+    
+    def fit_transform(self, X):
+        """
+        Fits to data, then transforms it.
+        """
+        self.fit(X)
+        return self.transform(X)
+        
+    def save(self, filepath):
+        """
+        Saves the scaler parameters to a JSON file.
+        """
+        if self.mean is None or self.std is None:
+            raise ValueError("Scaler has not been fitted yet.")
+            
+        data = {
+            "mean": self.mean.tolist(),
+            "std": self.std.tolist()
+        }
+        with open(filepath, 'w') as f:
+            json.dump(data, f)
+            
+    def load(self, filepath):
+        """
+        Loads scaler parameters from a JSON file.
+        """
+        if not os.path.exists(filepath):
+            raise FileNotFoundError(f"File not found: {filepath}")
+            
+        with open(filepath, 'r') as f:
+            data = json.load(f)
+            
+        self.mean = np.array(data["mean"])
+        self.std = np.array(data["std"])
+
+def standardize_data(X_train, X_val, X_test, save_path="scaler_params.json"):
     """
     Standardizes the data using the mean and standard deviation of the training set.
+    Also saves the scaler parameters.
     
     Args:
         X_train (np.ndarray): Training features.
         X_val (np.ndarray): Validation features.
         X_test (np.ndarray): Test features.
+        save_path (str): Path to save the scaler parameters.
         
     Returns:
         tuple: (X_train_scaled, X_val_scaled, X_test_scaled)
     """
-    mean = np.mean(X_train, axis=0)
-    std = np.std(X_train, axis=0)
+    scaler = Scaler()
+    X_train_scaled = scaler.fit_transform(X_train)
     
-    # Avoid division by zero
-    std[std == 0] = 1.0
-    
-    X_train_scaled = (X_train - mean) / std
-    X_val_scaled = (X_val - mean) / std
-    X_test_scaled = (X_test - mean) / std
+    if save_path:
+        scaler.save(save_path)
+    else:
+        # Optional: handle case where save_path is None if needed, or just pass
+        pass
+        
+    X_val_scaled = scaler.transform(X_val)
+    X_test_scaled = scaler.transform(X_test)
     
     return X_train_scaled, X_val_scaled, X_test_scaled
+

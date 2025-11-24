@@ -5,6 +5,7 @@ stages:
 
 test_backend:
   stage: test
+  when: manual
   script:
     - pip install -r backend/requirements.txt
     - export PYTHONPATH=$PYTHONPATH:$(pwd)

@@ -34,7 +34,7 @@ async def health_check():
 async def test_endpoint():
     return {"message": "Hello from the backend!"}
 
-from fivedreg.data import load_dataset, split_data, standardize_data
+from fivedreg.data import load_dataset, split_data, standardize_data, Scaler
 from fivedreg.model import FiveDNet
 import shutil
 import os
@@ -83,11 +83,18 @@ def run_prediction(model: Any, features: List[float], config: Dict | None) -> tu
     # Convert features to numpy array and reshape
     features_arr = np.array(features).reshape(1, -1)
     
-    # TODO: In a real scenario, we should save the scaler during training and load it here
-    # to transform the input features. For now, we assume features are pre-scaled or 
-    # we might need to implement scaler persistence. 
-    # For this coursework, we'll pass raw features if scaler isn't available, 
-    # but ideally we should standardize.
+    # Load scaler and transform features
+    scaler_path = "scaler_params.json"
+    if os.path.exists(scaler_path):
+        try:
+            scaler = Scaler()
+            scaler.load(scaler_path)
+            features_arr = scaler.transform(features_arr)
+            print("Features scaled successfully.")
+        except Exception as e:
+            print(f"Warning: Failed to load scaler: {e}. Using raw features.")
+    else:
+        print("Warning: Scaler file not found. Using raw features.")
     
     try:
         prediction = model.predict(features_arr)
@@ -247,6 +254,13 @@ async def predict(input_data: PredictionInput):
         raise HTTPException(
             status_code=503,  # 503 Service Unavailable
             detail="Model is not loaded. Please wait or check server status.",
+        )
+
+    # 3. Validate input dimensions
+    if len(input_data.feature_vector) != 5:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Expected 5 features, got {len(input_data.feature_vector)}"
         )
             
     try:

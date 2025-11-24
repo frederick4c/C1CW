@@ -1,0 +1,231 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.12, pytest-9.0.1, pluggy-1.6.0 -- /Users/fredlawrence/DiS/C1/C1CW/backend/apivenv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/fredlawrence/DiS/C1/C1CW
+configfile: pytest.ini
+plugins: anyio-4.11.0
+collecting ... collected 1 item
+
+backend/tests/test_api_integration.py::test_full_flow Starting full flow integration test...
+Uploading dataset...
+Upload successful.
+Triggering training...
+Received request to start training job.
+Starting training job with data from data/dummy_dataset.pkl...
+Loading data from data/dummy_dataset.pkl
+DEBUG: standardize_data called. CWD: /Users/fredlawrence/DiS/C1/C1CW
+DEBUG: Saving scaler to scaler_params.json
+DEBUG: Scaler saved. Exists? True
+Initializing and training FiveDNet...
+Epoch 1/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 528ms/step - loss: 0.3834 - mae: 0.5447[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 90ms/step - loss: 0.3716 - mae: 0.5438 - val_loss: 0.2928 - val_mae: 0.4540
+Epoch 2/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 10ms/step - loss: 0.3075 - mae: 0.5012[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 29ms/step - loss: 0.3145 - mae: 0.4970 - val_loss: 0.2558 - val_mae: 0.4111
+Epoch 3/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.2497 - mae: 0.4323[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.2661 - mae: 0.4534 - val_loss: 0.2244 - val_mae: 0.3788
+Epoch 4/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.2382 - mae: 0.4314[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.2255 - mae: 0.4104 - val_loss: 0.1969 - val_mae: 0.3459
+Epoch 5/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 8ms/step - loss: 0.2017 - mae: 0.3902[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.1902 - mae: 0.3705 - val_loss: 0.1744 - val_mae: 0.3120
+Epoch 6/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.1761 - mae: 0.3380[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.1598 - mae: 0.3373 - val_loss: 0.1572 - val_mae: 0.2887
+Epoch 7/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.1401 - mae: 0.3135[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.1354 - mae: 0.3095 - val_loss: 0.1440 - val_mae: 0.2828
+Epoch 8/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 8ms/step - loss: 0.1254 - mae: 0.2947[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.1151 - mae: 0.2791 - val_loss: 0.1369 - val_mae: 0.2811
+Epoch 9/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.1102 - mae: 0.2715[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.1006 - mae: 0.2632 - val_loss: 0.1339 - val_mae: 0.2906
+Epoch 10/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.1032 - mae: 0.2785[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.0921 - mae: 0.2531 - val_loss: 0.1344 - val_mae: 0.3072
+Epoch 11/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.1078 - mae: 0.2883[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 25ms/step - loss: 0.0864 - mae: 0.2454 - val_loss: 0.1367 - val_mae: 0.3210
+Epoch 12/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0817 - mae: 0.2459[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.0834 - mae: 0.2403 - val_loss: 0.1397 - val_mae: 0.3318
+Epoch 13/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0823 - mae: 0.2313[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.0829 - mae: 0.2357 - val_loss: 0.1424 - val_mae: 0.3393
+Epoch 14/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0858 - mae: 0.2474[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.0830 - mae: 0.2334 - val_loss: 0.1442 - val_mae: 0.3438
+Epoch 15/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0837 - mae: 0.2363[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.0831 - mae: 0.2325 - val_loss: 0.1447 - val_mae: 0.3458
+Epoch 16/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0776 - mae: 0.2321[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.0814 - mae: 0.2301 - val_loss: 0.1437 - val_mae: 0.3449
+Epoch 17/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0937 - mae: 0.2518[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.0795 - mae: 0.2269 - val_loss: 0.1416 - val_mae: 0.3421
+Epoch 18/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0723 - mae: 0.2108[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.0767 - mae: 0.2229 - val_loss: 0.1391 - val_mae: 0.3381
+Epoch 19/50
+[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 8ms/step - loss: 0.0817 - mae: 0.2384[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.0737 - mae: 0.2194 - val_loss: 0.1364 - val_mae: 0.3331
+Model saved to saved_model.keras
+Reloading model with new weights...
+Loading model from saved_model.keras...
+Model loaded successfully.
+Model reloaded and ready.
+Training started.
+Waiting for training...
+Waited 1s...
+Waited 2s...
+Waited 3s...
+Waited 4s...
+Waited 5s...
+Waited 6s...
+Waited 7s...
+Waited 8s...
+Waited 9s...
+Waited 10s...
+Waited 11s...
+Waited 12s...
+Waited 13s...
+Waited 14s...
+Waited 15s...
+Waited 16s...
+Waited 17s...
+Waited 18s...
+Waited 19s...
+Waited 20s...
+Waited 21s...
+Waited 22s...
+Waited 23s...
+Waited 24s...
+Waited 25s...
+Waited 26s...
+Waited 27s...
+Waited 28s...
+Waited 29s...
+Waited 30s...
+Timeout waiting for training to complete.
+Testing prediction...
+Running prediction...
+Input features: [0.5, 0.5, 0.5, 0.5, 0.5]
+Warning: Scaler file not found. Using raw features.
+[1m1/1[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 32ms/step[1m1/1[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 40ms/step
+Prediction complete: 0.19873586297035217
+Prediction result: {'prediction': 0.19873586297035217, 'confidence': 1.0, 'input_data': {'feature_vector': [0.5, 0.5, 0.5, 0.5, 0.5], 'config': {}}}
+FAILED
+
+=================================== FAILURES ===================================
+________________________________ test_full_flow ________________________________
+
+    def test_full_flow():
+        print("Starting full flow integration test...")
+    
+        # 0. Create dummy dataset
+        dataset_path = "dummy_dataset.pkl"
+        create_dummy_dataset(dataset_path)
+    
+        try:
+            # 1. Upload Dataset
+            print("Uploading dataset...")
+            with open(dataset_path, "rb") as f:
+                response = client.post("/upload", files={"file": ("dummy_dataset.pkl", f, "application/octet-stream")})
+    
+            assert response.status_code == 200
+            print("Upload successful.")
+    
+            # 2. Trigger Training
+            print("Triggering training...")
+            # The upload saves to data/dummy_dataset.pkl
+            uploaded_path = "data/dummy_dataset.pkl"
+    
+            response = client.post("/train", params={"data_path": uploaded_path})
+            assert response.status_code == 200
+            print("Training started.")
+    
+            # 3. Wait for training to complete
+            # We can check if 'scaler_params.json' is created/updated as a proxy for completion,
+            # or poll /status.
+            print("Waiting for training...")
+            max_retries = 30
+            training_complete = False
+    
+            # Remove existing scaler if any to ensure we are testing new training
+            if os.path.exists("scaler_params.json"):
+                os.remove("scaler_params.json")
+    
+            for i in range(max_retries):
+                if os.path.exists("scaler_params.json") and os.path.exists("saved_model.keras"):
+                    # Wait a bit more for the reload to finish
+                    time.sleep(2)
+                    training_complete = True
+                    break
+                time.sleep(1)
+                print(f"Waited {i+1}s...")
+    
+            if not training_complete:
+                print("Timeout waiting for training to complete.")
+                # Fail but let's see if we can still predict (maybe it was fast?)
+    
+            # 4. Predict
+            print("Testing prediction...")
+            # 5 features
+            payload = {
+                "feature_vector": [0.5, 0.5, 0.5, 0.5, 0.5],
+                "config": {}
+            }
+            response = client.post("/predict", json=payload)
+    
+            if response.status_code != 200:
+                print(f"Prediction failed: {response.text}")
+    
+            assert response.status_code == 200
+            result = response.json()
+            print(f"Prediction result: {result}")
+            assert "prediction" in result
+            assert isinstance(result["prediction"], float)
+    
+            # Verify scaler was used (we can't easily verify the exact value without mocking,
+            # but we verified the file exists)
+>           assert os.path.exists("scaler_params.json")
+E           AssertionError: assert False
+E            +  where False = <function exists at 0x100f17e20>('scaler_params.json')
+E            +    where <function exists at 0x100f17e20> = <module 'posixpath' (frozen)>.exists
+E            +      where <module 'posixpath' (frozen)> = os.path
+
+backend/tests/test_api_integration.py:93: AssertionError
+=============================== warnings summary ===============================
+backend/main.py:162
+  /Users/fredlawrence/DiS/C1/C1CW/backend/main.py:162: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    class PredictionInput(BaseModel):
+
+backend/main.py:198
+  /Users/fredlawrence/DiS/C1/C1CW/backend/main.py:198: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+backend/apivenv/lib/python3.12/site-packages/fastapi/applications.py:4575
+backend/apivenv/lib/python3.12/site-packages/fastapi/applications.py:4575
+  /Users/fredlawrence/DiS/C1/C1CW/backend/apivenv/lib/python3.12/site-packages/fastapi/applications.py:4575: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)
+
+backend/main.py:210
+  /Users/fredlawrence/DiS/C1/C1CW/backend/main.py:210: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+backend/tests/test_api_integration.py: 14 warnings
+  /Users/fredlawrence/DiS/C1/C1CW/backend/apivenv/lib/python3.12/site-packages/keras/src/backend/tensorflow/core.py:171: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+    return np.array(x)
+
+backend/tests/test_api_integration.py::test_full_flow
+  /Users/fredlawrence/DiS/C1/C1CW/backend/apivenv/lib/python3.12/site-packages/keras/src/utils/python_utils.py:196: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+    value = float(value)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED backend/tests/test_api_integration.py::test_full_flow - AssertionError: assert False
+ +  where False = <function exists at 0x100f17e20>('scaler_params.json')
+ +    where <function exists at 0x100f17e20> = <module 'posixpath' (frozen)>.exists
+ +      where <module 'posixpath' (frozen)> = os.path
+======================= 1 failed, 20 warnings in 36.39s ========================
