@@ -14,22 +14,22 @@ export const Input: React.FC<InputProps> = ({
     ...props
 }) => {
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
             {label && (
-                <label className="text-sm font-semibold text-foreground">
+                <label className="text-sm font-medium text-[var(--text-secondary)] ml-1">
                     {label}
                 </label>
             )}
             <input
-                className={`px-5 py-4 rounded-lg border-2 border-[var(--border)] bg-white text-foreground placeholder-foreground-tertiary focus:outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)] focus:ring-opacity-20 transition-all ${error ? 'border-[var(--error)] focus:border-[var(--error)] focus:ring-[var(--error)]' : ''
+                className={`px-4 py-3 rounded-xl border border-[var(--border)] bg-white text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-all duration-200 ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
                     } ${className}`}
                 {...props}
             />
             {error && (
-                <p className="text-sm text-[var(--error)] mt-1">{error}</p>
+                <p className="text-sm text-[var(--error)] ml-1">{error}</p>
             )}
             {helperText && !error && (
-                <p className="text-sm text-foreground-secondary mt-1">{helperText}</p>
+                <p className="text-sm text-[var(--text-tertiary)] ml-1">{helperText}</p>
             )}
         </div>
     );

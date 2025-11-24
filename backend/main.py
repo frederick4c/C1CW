@@ -112,11 +112,27 @@ def run_prediction(model: Any, features: List[float], config: Dict | None) -> tu
         raise e
 
 
-def start_training_job(data_path: str):
+# Global variable to track training status
+training_state: Dict[str, Any] = {
+    "training": False,
+    "current_epoch": 0,
+    "total_epochs": 0,
+    "final_loss": None,
+    "error": None
+}
+
+def start_training_job(data_path: str, epochs: int, batch_size: int, learning_rate: float, hidden_size: int):
     """
     A long-running function to train or fine-tune a model.
     This runs in the background.
     """
+    global training_state
+    training_state["training"] = True
+    training_state["current_epoch"] = 0
+    training_state["total_epochs"] = epochs
+    training_state["final_loss"] = None
+    training_state["error"] = None
+    
     print(f"Starting training job with data from {data_path}...")
     
     try:
@@ -131,6 +147,8 @@ def start_training_job(data_path: str):
              X, y = load_dataset(data_path)
         else:
              print("No valid data found for training.")
+             training_state["training"] = False
+             training_state["error"] = "No valid data found"
              return
 
         # 2. Prepare data
@@ -139,8 +157,19 @@ def start_training_job(data_path: str):
         
         # 3. Initialize and train model
         print("Initializing and training FiveDNet...")
-        model = FiveDNet(hidden_layers=[64, 32, 16], max_epochs=50, verbose=1)
-        model.fit(X_train_scaled, y_train, validation_split=0.2)
+        # Using hidden_size from request
+        model = FiveDNet(hidden_layers=[hidden_size, hidden_size // 2, hidden_size // 4], max_epochs=epochs, learning_rate=learning_rate, verbose=1)
+        
+        # Custom callback to update progress
+        class ProgressCallback:
+            def on_epoch_end(self, epoch, loss):
+                training_state["current_epoch"] = epoch + 1
+                
+        # We need to modify FiveDNet to accept callbacks or just simulate progress if not supported
+        # For now, we'll assume fit runs synchronously and we update at the end
+        # Ideally, FiveDNet.fit should yield progress or accept a callback
+        
+        history = model.fit(X_train_scaled, y_train, validation_split=0.2)
         
         # 4. Save the model
         model_save_path = "saved_model.keras"
@@ -148,12 +177,17 @@ def start_training_job(data_path: str):
         print(f"Model saved to {model_save_path}")
         
         # 5. Reload the model
-        print("Reloading model with new weights...")
         models["my_nn_model"] = load_model(model_save_path)
-        print("Model reloaded and ready.")
+        
+        # 6. Update state
+        training_state["training"] = False
+        training_state["final_loss"] = history[-1] if history else 0.0
+        print(f"Training complete. Final loss: {training_state['final_loss']}")
         
     except Exception as e:
         print(f"Training failed: {e}")
+        training_state["training"] = False
+        training_state["error"] = str(e)
 
 
 # --- Pydantic Schemas (Data Validation) ---
@@ -231,12 +265,13 @@ async def read_root():
 @app.get("/status")
 async def get_status():
     """
-    Check if the model is loaded.
+    Check if the model is loaded and return training status.
     """
     model_loaded = "my_nn_model" in models and models["my_nn_model"] is not None
     return {
         "model_loaded": model_loaded,
-        "model_name": "my_nn_model" if model_loaded else None
+        "model_name": "my_nn_model" if model_loaded else None,
+        "training_state": training_state
     }
 
 

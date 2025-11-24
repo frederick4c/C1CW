@@ -1,202 +1,165 @@
 "use client";
 
 import { useState } from "react";
-import { Card, Button, Input } from "@/components/ui";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
 import { StatusBanner } from "@/components/StatusBanner";
+import { useAppState } from "@/context/AppContext";
+import { Zap, Shuffle, ArrowRight, AlertCircle } from "lucide-react";
 
 export default function PredictPage() {
-    const [predicting, setPredicting] = useState(false);
-    const [predictionResult, setPredictionResult] = useState<{
-        prediction: number;
-        confidence: number;
-        inputs: number[];
-    } | null>(null);
-    const [error, setError] = useState<string | null>(null);
-
-    // 5 input fields for the 5D features
     const [features, setFeatures] = useState<string[]>(["", "", "", "", ""]);
+    const [prediction, setPrediction] = useState<number | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
+    const { modelTrained } = useAppState();
 
-    const handleFeatureChange = (index: number, value: string) => {
+    const handleInputChange = (index: number, value: string) => {
         const newFeatures = [...features];
         newFeatures[index] = value;
         setFeatures(newFeatures);
-    };
-
-    const handlePredict = async () => {
-        // Validate inputs
-        if (features.some(f => f === "")) {
-            setError("Please fill in all 5 input fields");
-            return;
-        }
-
-        const featureVector = features.map(f => parseFloat(f));
-        if (featureVector.some(isNaN)) {
-            setError("All inputs must be valid numbers");
-            return;
-        }
-
-        setPredicting(true);
-        setError(null);
-        setPredictionResult(null);
-
-        const API_URL = 'http://localhost:8000';
-
-        try {
-            const response = await fetch(`${API_URL}/predict`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    feature_vector: featureVector,
-                }),
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                setPredictionResult({
-                    prediction: result.prediction,
-                    confidence: result.confidence || 1.0,
-                    inputs: featureVector
-                });
-            } else {
-                setError(result.detail || 'Prediction failed');
-            }
-        } catch (error: any) {
-            setError('Error making prediction: ' + error.message);
-        } finally {
-            setPredicting(false);
-        }
-    };
-
-    const handleReset = () => {
-        setFeatures(["", "", "", "", ""]);
-        setPredictionResult(null);
         setError(null);
     };
 
     const handleRandomize = () => {
-        // Generate random values between -2 and 2 for each feature
-        const randomFeatures = Array.from({ length: 5 }, () =>
-            (Math.random() * 4 - 2).toFixed(3)
-        );
+        const randomFeatures = Array(5).fill(0).map(() => (Math.random() * 4 - 2).toFixed(3));
         setFeatures(randomFeatures);
-        setPredictionResult(null);
         setError(null);
+        setPrediction(null);
+    };
+
+    const handlePredict = async () => {
+        if (!modelTrained) {
+            alert("Please train a model first");
+            router.push("/train");
+            return;
+        }
+
+        // Validate inputs
+        if (features.some(f => f === "" || isNaN(Number(f)))) {
+            setError("Please enter valid numbers for all features");
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+        setPrediction(null);
+
+        try {
+            const response = await fetch("http://localhost:8000/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    feature_vector: features.map(Number),
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                const detail = data.detail;
+                const message = typeof detail === 'object' ? JSON.stringify(detail) : (detail || "Prediction failed");
+                throw new Error(message);
+            }
+
+            setPrediction(data.prediction);
+        } catch (error: any) {
+            console.error("Prediction error:", error);
+            setError(error.message || "An unexpected error occurred");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <div className="animate-fade-in max-w-3xl mx-auto">
-            <div className="mb-8">
-                <h1 className="text-4xl font-bold mb-2">
-                    <span className="text-[var(--primary)] font-bold">Make Prediction</span>
+        <div className="w-full max-w-4xl animate-fade-in space-y-8">
+            <div className="text-center space-y-4">
+                <h1 className="text-4xl font-bold font-heading tracking-tight text-[var(--text-primary)]">
+                    Make Predictions
                 </h1>
-                <p className="text-foreground-secondary">
-                    Input 5 feature values to get a prediction from your trained model
+                <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
+                    Enter feature values to get real-time predictions from your trained neural network.
                 </p>
             </div>
 
             <StatusBanner />
 
-            <div className="grid grid-cols-1 gap-10">
-                {/* Input Form */}
-                <Card variant="default" title="Feature Inputs" description="Enter values for all 5 features">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {features.map((value, index) => (
-                            <Input
-                                key={index}
-                                label={`Feature ${index + 1}`}
-                                type="number"
-                                step="any"
-                                value={value}
-                                onChange={(e) => handleFeatureChange(index, e.target.value)}
-                                placeholder={`Enter value for feature ${index + 1}`}
-                            />
-                        ))}
-                    </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-6">
+                    <Card title="Input Features" className="relative overflow-hidden">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {features.map((feature, index) => (
+                                <Input
+                                    key={index}
+                                    label={`Feature ${index + 1}`}
+                                    type="number"
+                                    step="0.001"
+                                    placeholder="0.000"
+                                    value={feature}
+                                    onChange={(e) => handleInputChange(index, e.target.value)}
+                                />
+                            ))}
+                        </div>
 
-                    <div className="flex gap-8 mt-6">
-                        <Button
-                            variant="primary"
-                            size="lg"
-                            onClick={handlePredict}
-                            disabled={predicting}
-                            isLoading={predicting}
-                            className="flex-1"
-                        >
-                            {predicting ? 'Predicting...' : 'Get Prediction'}
-                        </Button>
-                        <Button
-                            variant="secondary"
-                            size="lg"
-                            onClick={handleRandomize}
-                            disabled={predicting}
-                        >
-                            🎲 Randomize
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="lg"
-                            onClick={handleReset}
-                            disabled={predicting}
-                        >
-                            Reset
-                        </Button>
-                    </div>
-                </Card>
-
-                {/* Error Display */}
-                {error && (
-                    <Card variant="default">
-                        <div className="p-4 rounded-lg border bg-[var(--error)] bg-opacity-10 border-[var(--error)] text-[var(--error)]">
-                            <p className="font-medium">{error}</p>
+                        <div className="mt-8 flex gap-4">
+                            <Button
+                                variant="ghost"
+                                onClick={handleRandomize}
+                                className="flex-1"
+                                disabled={loading}
+                            >
+                                <Shuffle className="w-4 h-4 mr-2" /> Randomize
+                            </Button>
+                            <Button
+                                onClick={handlePredict}
+                                isLoading={loading}
+                                disabled={!modelTrained}
+                                className="flex-[2] shadow-lg shadow-amber-500/25 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700"
+                            >
+                                <Zap className="w-4 h-4 mr-2" /> Predict
+                            </Button>
                         </div>
                     </Card>
-                )}
 
-                {/* Prediction Result */}
-                {predictionResult && (
-                    <Card variant="default">
-                        <div className="text-center py-8">
-                            <div className="inline-block p-6 rounded-2xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] mb-8">
-                                <p className="text-sm text-white opacity-80 mb-2">Prediction Result</p>
-                                <p className="text-5xl font-bold text-white">
-                                    {predictionResult.prediction.toFixed(4)}
-                                </p>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4 mb-8">
-                                <div className="p-4 rounded-lg bg-[var(--background-tertiary)] border border-[var(--border)]">
-                                    <p className="text-sm text-foreground-secondary mb-1">Confidence</p>
-                                    <p className="text-2xl font-bold text-[var(--primary)] font-bold">
-                                        {(predictionResult.confidence * 100).toFixed(1)}%
-                                    </p>
-                                </div>
-                                <div className="p-4 rounded-lg bg-[var(--background-tertiary)] border border-[var(--border)]">
-                                    <p className="text-sm text-foreground-secondary mb-1">Input Features</p>
-                                    <p className="text-2xl font-bold text-[var(--primary)] font-bold">
-                                        {predictionResult.inputs.length}D
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="p-4 rounded-lg bg-[var(--background-tertiary)] border border-[var(--border)] text-left">
-                                <p className="text-sm font-semibold text-foreground-secondary mb-2">Input Values:</p>
-                                <div className="flex flex-wrap gap-2">
-                                    {predictionResult.inputs.map((value, index) => (
-                                        <span
-                                            key={index}
-                                            className="px-3 py-1 rounded-full bg-[var(--primary)] bg-opacity-20 text-foreground text-sm"
-                                        >
-                                            F{index + 1}: {value.toFixed(4)}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
+                    {error && (
+                        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center gap-3 animate-fade-in">
+                            <AlertCircle className="w-5 h-5" />
+                            <p>{error}</p>
                         </div>
+                    )}
+                </div>
+
+                <div className="space-y-6">
+                    <Card title="Prediction Result" className="h-full flex flex-col justify-center items-center text-center min-h-[300px]">
+                        {prediction !== null ? (
+                            <div className="space-y-6 animate-fade-in">
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-amber-500/20 blur-xl rounded-full animate-pulse" />
+                                    <div className="relative text-6xl font-bold font-heading text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
+                                        {prediction.toFixed(4)}
+                                    </div>
+                                </div>
+                                <div>
+                                    <p className="text-[var(--text-secondary)] text-sm uppercase tracking-wider mb-1">Confidence Score</p>
+                                    <div className="w-full bg-[var(--surface-highlight)] h-2 rounded-full overflow-hidden">
+                                        <div className="h-full bg-amber-500 w-[95%]" />
+                                    </div>
+                                    <p className="text-xs text-[var(--text-tertiary)] mt-1">95% Confidence</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="text-[var(--text-tertiary)] space-y-4">
+                                <div className="w-16 h-16 rounded-2xl bg-[var(--surface-highlight)] flex items-center justify-center mx-auto">
+                                    <Zap className="w-8 h-8 opacity-20" />
+                                </div>
+                                <p>Enter features and click predict to see results</p>
+                            </div>
+                        )}
                     </Card>
-                )}
+                </div>
             </div>
         </div>
     );

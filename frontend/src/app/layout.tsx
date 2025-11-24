@@ -26,20 +26,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+      </head>
+      <body className="font-sans antialiased bg-[var(--background)] min-h-screen flex flex-col items-center py-8">
         <AppProvider>
-          <Navbar />
-          <main className="w-full min-h-[calc(100vh-4rem)] flex justify-center">
-            <div className="w-full max-w-7xl px-8 py-12">
+          <div className="w-full max-w-5xl px-4 md:px-6 flex flex-col items-center">
+            <Navbar />
+            <main className="w-full flex flex-col items-center">
               {children}
-            </div>
-          </main>
+            </main>
+          </div>
         </AppProvider>
       </body>
     </html>
   );
 }
-
 

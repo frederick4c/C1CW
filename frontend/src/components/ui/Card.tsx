@@ -16,23 +16,20 @@ export const Card: React.FC<CardProps> = ({
     variant = 'default',
     ...props
 }) => {
-    const baseStyles = 'rounded-lg p-8 transition-all duration-200';
-    const variants = {
-        default: 'bg-white border border-[var(--border)] hover:shadow-md',
-        outlined: 'bg-[var(--background-secondary)] border border-[var(--border)] hover:border-[var(--border-hover)]',
-    };
-
     return (
-        <div className={`${baseStyles} ${variants[variant]} ${className}`} {...props}>
+        <div
+            className={`glass-panel rounded-2xl p-8 transition-all duration-300 hover:border-[var(--primary)]/30 hover:shadow-xl hover:shadow-teal-900/5 ${className}`}
+            {...props}
+        >
             {(title || description) && (
                 <div className="mb-6">
                     {title && (
-                        <h3 className="text-xl font-bold text-foreground mb-3">
+                        <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2 font-heading tracking-tight">
                             {title}
                         </h3>
                     )}
                     {description && (
-                        <p className="text-foreground-secondary text-sm">
+                        <p className="text-[var(--text-secondary)] text-sm leading-relaxed">
                             {description}
                         </p>
                     )}

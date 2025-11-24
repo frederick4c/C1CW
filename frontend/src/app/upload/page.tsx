@@ -1,261 +1,221 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { Card, Button, Input } from "@/components/ui";
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { StatusBanner } from "@/components/StatusBanner";
 import { useAppState } from "@/context/AppContext";
+import { UploadCloud, FileText, AlertCircle, CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
 
 export default function UploadPage() {
-    const { refreshStatus, setDatasetUploaded } = useAppState();
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [file, setFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
-    const [uploadStatus, setUploadStatus] = useState<{
-        type: 'success' | 'error' | 'info';
-        message: string;
-    } | null>(null);
-    const [dataStats, setDataStats] = useState<{ X: number[], y: number[] } | null>(null);
-    const [isDragging, setIsDragging] = useState(false);
+    const [status, setStatus] = useState<{ type: "success" | "error" | "info"; message: string } | null>(null);
+    const [datasetInfo, setDatasetInfo] = useState<any>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const router = useRouter();
+    const { refreshStatus } = useAppState();
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files[0]) {
-            const file = event.target.files[0];
-            if (file.name.endsWith('.pkl')) {
-                setSelectedFile(file);
-                setUploadStatus(null);
-                setDataStats(null);
-            } else {
-                setUploadStatus({
-                    type: 'error',
-                    message: 'Please select a .pkl file'
-                });
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const selectedFile = e.target.files[0];
+            if (!selectedFile.name.endsWith(".pkl")) {
+                setStatus({ type: "error", message: "Please upload a .pkl file" });
+                return;
             }
+            setFile(selectedFile);
+            setStatus(null);
         }
-    };
-
-    const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        setIsDragging(false);
-
-        if (event.dataTransfer.files && event.dataTransfer.files[0]) {
-            const file = event.dataTransfer.files[0];
-            if (file.name.endsWith('.pkl')) {
-                setSelectedFile(file);
-                setUploadStatus(null);
-                setDataStats(null);
-            } else {
-                setUploadStatus({
-                    type: 'error',
-                    message: 'Please select a .pkl file'
-                });
-            }
-        }
-    };
-
-    const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        setIsDragging(true);
-    };
-
-    const handleDragLeave = () => {
-        setIsDragging(false);
     };
 
     const handleUpload = async () => {
-        if (!selectedFile) {
-            setUploadStatus({
-                type: 'error',
-                message: 'Please select a file first.'
-            });
-            return;
-        }
+        if (!file) return;
 
         setUploading(true);
-        setUploadStatus({ type: 'info', message: 'Uploading...' });
+        setStatus({ type: "info", message: "Uploading and validating dataset..." });
 
         const formData = new FormData();
-        formData.append('file', selectedFile);
-
-        const API_URL = 'http://localhost:8000';
+        formData.append("file", file);
 
         try {
-            const response = await fetch(`${API_URL}/upload`, {
-                method: 'POST',
+            const response = await fetch("http://localhost:8000/upload", {
+                method: "POST",
                 body: formData,
             });
 
-            const result = await response.json();
+            const data = await response.json();
 
-            if (response.ok) {
-                setUploadStatus({
-                    type: 'success',
-                    message: result.message
-                });
-                setDataStats(result.data_shape);
-                setDatasetUploaded(true); // Update global state
-                await refreshStatus(); // Refresh global state
-            } else {
-                setUploadStatus({
-                    type: 'error',
-                    message: result.detail || 'Upload failed'
-                });
+            if (!response.ok) {
+                throw new Error(data.detail || "Upload failed");
             }
+
+            setDatasetInfo(data);
+            setStatus({ type: "success", message: "Dataset uploaded and validated successfully!" });
+            refreshStatus(); // Update global status
         } catch (error: any) {
-            setUploadStatus({
-                type: 'error',
-                message: 'Error during upload: ' + error.message
-            });
+            setStatus({ type: "error", message: error.message });
         } finally {
             setUploading(false);
         }
     };
 
-    const statusColors = {
-        success: 'bg-green-600 text-white border-green-600',
-        error: 'bg-red-600 text-white border-red-600',
-        info: 'bg-blue-600 text-white border-blue-600',
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            const droppedFile = e.dataTransfer.files[0];
+            if (!droppedFile.name.endsWith(".pkl")) {
+                setStatus({ type: "error", message: "Please upload a .pkl file" });
+                return;
+            }
+            setFile(droppedFile);
+            setStatus(null);
+        }
     };
 
     return (
-        <div className="animate-fade-in max-w-3xl mx-auto">
-            <div className="mb-8">
-                <h1 className="text-4xl font-bold mb-2">
-                    <span className="text-[var(--primary)] font-bold">Upload Dataset</span>
+        <div className="w-full max-w-4xl animate-fade-in space-y-8">
+            <div className="text-center space-y-4">
+                <h1 className="text-4xl font-bold font-heading tracking-tight text-[var(--text-primary)]">
+                    Upload Dataset
                 </h1>
-                <p className="text-foreground-secondary">
-                    Upload a .pkl dataset file to train your neural network
+                <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
+                    Upload your preprocessed .pkl dataset containing 5D input vectors and target values.
                 </p>
             </div>
 
             <StatusBanner />
 
-            <Card variant="default">
-                {/* Drag and Drop Area */}
-                <div
-                    className={`
-            border-2 border-dashed rounded-xl p-12 mb-8 text-center transition-all
-            ${isDragging
-                            ? 'border-[var(--primary)] bg-[var(--primary)] bg-opacity-10'
-                            : 'border-[var(--border)] hover:border-[var(--border-hover)]'
-                        }
-          `}
-                    onDrop={handleDrop}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                >
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] flex items-center justify-center text-4xl">
-                            📤
-                        </div>
-                        <div>
-                            <p className="text-lg font-semibold text-foreground mb-1">
-                                Drop your .pkl file here
-                            </p>
-                            <p className="text-sm text-foreground-secondary">
-                                or click below to browse
-                            </p>
-                        </div>
-                        <input
-                            type="file"
-                            accept=".pkl"
-                            onChange={handleFileChange}
-                            className="hidden"
-                            id="file-upload"
-                        />
-                        <label
-                            htmlFor="file-upload"
-                            className="px-6 py-2.5 text-base font-semibold rounded-lg transition-all duration-200 focus:outline-none cursor-pointer border-2 border-[var(--border)] text-foreground hover:border-[var(--border-hover)] hover:bg-[var(--glass-bg)]"
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-6">
+                    <Card className="relative overflow-hidden">
+                        <div
+                            className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${file
+                                    ? "border-emerald-500/50 bg-emerald-500/5"
+                                    : "border-[var(--border)] hover:border-[var(--primary)] hover:bg-[var(--surface-highlight)]"
+                                }`}
+                            onDragOver={handleDragOver}
+                            onDrop={handleDrop}
                         >
-                            Browse Files
-                        </label>
-                    </div>
-                </div>
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleFileChange}
+                                accept=".pkl"
+                                className="hidden"
+                            />
 
-                {/* Selected File Display */}
-                {selectedFile && (
-                    <div className="mb-8 p-4 rounded-lg bg-[var(--background-tertiary)] border border-[var(--border)]">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-lg bg-[var(--primary)] bg-opacity-20 flex items-center justify-center">
-                                    📄
+                            <div className="flex flex-col items-center gap-4">
+                                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-colors ${file ? "bg-emerald-500/20 text-emerald-400" : "bg-[var(--surface-highlight)] text-[var(--primary)]"
+                                    }`}>
+                                    {file ? <FileText className="w-8 h-8" /> : <UploadCloud className="w-8 h-8" />}
                                 </div>
-                                <div>
-                                    <p className="font-medium text-foreground">{selectedFile.name}</p>
-                                    <p className="text-sm text-foreground-secondary">
-                                        {(selectedFile.size / 1024).toFixed(2)} KB
+
+                                <div className="space-y-2">
+                                    <h3 className="text-lg font-bold text-[var(--text-primary)]">
+                                        {file ? file.name : "Drop your dataset here"}
+                                    </h3>
+                                    <p className="text-sm text-[var(--text-secondary)]">
+                                        {file ? `${(file.size / 1024 / 1024).toFixed(2)} MB` : "or click to browse files"}
                                     </p>
                                 </div>
-                            </div>
-                            <button
-                                onClick={() => setSelectedFile(null)}
-                                className="text-foreground-secondary hover:text-[var(--error)] transition-colors"
-                            >
-                                ✕
-                            </button>
-                        </div>
-                    </div>
-                )}
 
-                {/* Upload Button */}
-                <Button
-                    variant="primary"
-                    size="lg"
-                    onClick={handleUpload}
-                    disabled={!selectedFile || uploading}
-                    isLoading={uploading}
-                    className="w-full"
-                >
-                    {uploading ? 'Uploading...' : 'Upload Dataset'}
-                </Button>
+                                {!file && (
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="mt-4"
+                                    >
+                                        Select File
+                                    </Button>
+                                )}
 
-                {/* Upload Status */}
-                {uploadStatus && (
-                    <div className={`mt-6 p-4 rounded-lg border ${statusColors[uploadStatus.type]}`}>
-                        <p className="font-medium">{uploadStatus.message}</p>
-                    </div>
-                )}
-
-                {/* Dataset Statistics */}
-                {dataStats && (
-                    <div className="mt-6 p-6 rounded-lg bg-[var(--background-tertiary)] border border-[var(--border)]">
-                        <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                            <span>📊</span>
-                            Dataset Statistics
-                        </h3>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <p className="text-sm text-foreground-secondary mb-1">Features (X) Shape</p>
-                                <p className="text-2xl font-bold text-[var(--primary)] font-bold">
-                                    {dataStats.X.join(' × ')}
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-sm text-foreground-secondary mb-1">Target (y) Shape</p>
-                                <p className="text-2xl font-bold text-[var(--primary)] font-bold">
-                                    {dataStats.y.join(' × ')}
-                                </p>
+                                {file && (
+                                    <div className="flex gap-3 mt-4">
+                                        <Button
+                                            variant="ghost"
+                                            onClick={() => { setFile(null); setStatus(null); }}
+                                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                                        >
+                                            Remove
+                                        </Button>
+                                        <Button onClick={handleUpload} isLoading={uploading}>
+                                            Upload Dataset
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                         </div>
-                    </div>
-                )}
+                    </Card>
 
-                {/* Next Step Button */}
-                {dataStats && (
-                    <div className="mt-6 p-6 rounded-lg border border-[var(--border)] bg-[var(--background-secondary)]">
-                        <div className="flex items-center justify-between">
+                    {status && (
+                        <div className={`p-4 rounded-xl flex items-start gap-3 animate-fade-in ${status.type === 'error' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                                status.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                                    'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                            }`}>
+                            {status.type === 'error' && <AlertCircle className="w-5 h-5 mt-0.5" />}
+                            {status.type === 'success' && <CheckCircle2 className="w-5 h-5 mt-0.5" />}
+                            {status.type === 'info' && <Loader2 className="w-5 h-5 mt-0.5 animate-spin" />}
                             <div>
-                                <h4 className="font-bold text-foreground mb-1">Ready for the next step?</h4>
-                                <p className="text-sm text-foreground-secondary">Your dataset is loaded. Start training your model!</p>
+                                <p className="font-medium">{status.message}</p>
                             </div>
-                            <Link href="/train">
-                                <Button variant="primary" size="lg">
-                                    Train Model →
+                        </div>
+                    )}
+                </div>
+
+                <div className="space-y-6">
+                    <Card title="Requirements">
+                        <ul className="space-y-3 text-sm text-[var(--text-secondary)]">
+                            <li className="flex items-start gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] mt-2" />
+                                <span>File format must be <strong>.pkl</strong> (Python Pickle)</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] mt-2" />
+                                <span>Must contain a dictionary with keys: <strong>'data'</strong> and <strong>'labels'</strong></span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] mt-2" />
+                                <span>Input data shape: <strong>(N, 5)</strong></span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] mt-2" />
+                                <span>Labels shape: <strong>(N, 1)</strong></span>
+                            </li>
+                        </ul>
+                    </Card>
+
+                    {datasetInfo && (
+                        <Card title="Dataset Info" className="animate-fade-in border-emerald-500/30">
+                            <div className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="p-3 rounded-lg bg-[var(--surface-highlight)]">
+                                        <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider">Samples</p>
+                                        <p className="text-xl font-bold font-heading text-[var(--text-primary)]">{datasetInfo.n_samples}</p>
+                                    </div>
+                                    <div className="p-3 rounded-lg bg-[var(--surface-highlight)]">
+                                        <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider">Features</p>
+                                        <p className="text-xl font-bold font-heading text-[var(--text-primary)]">{datasetInfo.n_features}</p>
+                                    </div>
+                                </div>
+
+                                <Button
+                                    className="w-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20"
+                                    onClick={() => router.push('/train')}
+                                >
+                                    Proceed to Training <ArrowRight className="w-4 h-4 ml-2" />
                                 </Button>
-                            </Link>
-                        </div>
-                    </div>
-                )}
-            </Card>
+                            </div>
+                        </Card>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }
