@@ -142,13 +142,6 @@ export default function PredictPage() {
                                         {prediction.toFixed(4)}
                                     </div>
                                 </div>
-                                <div>
-                                    <p className="text-[var(--text-secondary)] text-sm uppercase tracking-wider mb-1">Confidence Score</p>
-                                    <div className="w-full bg-[var(--surface-highlight)] h-2 rounded-full overflow-hidden">
-                                        <div className="h-full bg-amber-500 w-[95%]" />
-                                    </div>
-                                    <p className="text-xs text-[var(--text-tertiary)] mt-1">95% Confidence</p>
-                                </div>
                             </div>
                         ) : (
                             <div className="text-[var(--text-tertiary)] space-y-4">

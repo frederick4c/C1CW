@@ -73,7 +73,7 @@ def load_model(model_path: str) -> Any:
         return None
 
 
-def run_prediction(model: Any, features: List[float], config: Dict | None) -> tuple[Any, float]:
+def run_prediction(model: Any, features: List[float], config: Dict | None) -> float:
     """
     Runs the actual prediction using the loaded model.
     """
@@ -101,12 +101,8 @@ def run_prediction(model: Any, features: List[float], config: Dict | None) -> tu
         # Prediction is a numpy array, take the first element
         result = float(prediction[0])
         
-        # Confidence is not typically applicable for regression in the same way as classification
-        # We can return 1.0 or some other metric if needed, or just None/0.0
-        confidence = 1.0 
-        
         print(f"Prediction complete: {result}")
-        return result, confidence
+        return result
     except Exception as e:
         print(f"Prediction failed: {e}")
         raise e
@@ -215,7 +211,6 @@ class PredictionOutput(BaseModel):
     The output data structure for a prediction response.
     """
     prediction: Any
-    confidence: float | None = None
     input_data: PredictionInput
 
 
@@ -300,7 +295,7 @@ async def predict(input_data: PredictionInput):
             
     try:
         # 3. Run the prediction
-        raw_prediction, confidence = run_prediction(
+        raw_prediction = run_prediction(
             model=model,
             features=input_data.feature_vector,
             config=input_data.config
@@ -309,7 +304,6 @@ async def predict(input_data: PredictionInput):
         # 4. Format and return the response
         return PredictionOutput(
             prediction=raw_prediction,
-            confidence=confidence,
             input_data=input_data
         )
         

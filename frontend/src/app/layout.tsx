@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fred's 5D Neural Network | C1 Coursework",
+  title: "Fred's Neural Network | C1 Coursework",
   description: "Modern interface for machine learning model training and predictions - fl482",
 };
 

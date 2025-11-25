@@ -43,7 +43,7 @@ export default function Home() {
   const features = [
     {
       title: "Upload Dataset",
-      description: "Upload your .pkl datasets securely. We validate structure and dimensions automatically.",
+      description: "Upload your .pkl dataset.",
       icon: <Database className="w-8 h-8 text-emerald-400" />,
       href: "/upload",
       color: "from-emerald-500/20 to-teal-500/20",
@@ -59,7 +59,7 @@ export default function Home() {
     },
     {
       title: "Make Predictions",
-      description: "Get instant predictions from your trained model with confidence scores and detailed insights.",
+      description: "Get instant predictions from your trained model.",
       icon: <Zap className="w-8 h-8 text-amber-400" />,
       href: "/predict",
       color: "from-amber-500/20 to-orange-500/20",
@@ -68,15 +68,16 @@ export default function Home() {
   ];
 
   return (
-    <div className="w-full max-w-5xl animate-fade-in space-y-16">
+    // Added 'mx-auto' here to center the main container on the screen
+    <div className="w-full max-w-5xl mx-auto animate-fade-in space-y-16">
       {/* Hero Section */}
       <div className="text-center space-y-6 py-12">
         <h1 className="text-6xl font-bold font-heading tracking-tight">
-          <span className="text-gradient">Advanced</span> <br />
+          <span className="text-gradient">Fred's</span> <br />
           <span className="text-gradient-primary">Neural Network</span>
         </h1>
         <p className="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
-          A professional interface for training, evaluating, and deploying 5D neural networks with ease and precision.
+          An app for training and applying 5D neural networks.
         </p>
         <div className="flex items-center justify-center gap-4 pt-4">
           <Link href="/upload">
@@ -128,7 +129,8 @@ export default function Home() {
       </div>
 
       {/* Features Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Added 'max-w-4xl mx-auto' to constrain width and center the grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
         {features.map((feature) => (
           <Link key={feature.href} href={feature.href} className="group">
             <Card className={`h-full hover:-translate-y-1 transition-transform duration-300 border-transparent hover:border-[var(--primary)]/30`}>
