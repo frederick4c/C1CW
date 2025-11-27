@@ -9,7 +9,8 @@ interface AppState {
     loading: boolean;
     refreshStatus: () => Promise<void>;
     setDatasetUploaded: (uploaded: boolean) => void;
-    clearAll: () => void;
+    clearAll: () => Promise<void>;
+    deleteModel: () => Promise<void>;
 }
 
 const AppContext = createContext<AppState | undefined>(undefined);
@@ -28,12 +29,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             const statusRes = await fetch(`${API_URL}/status`);
             const statusData = await statusRes.json();
             setModelTrained(statusData.model_loaded || false);
-
-            // Check localStorage for dataset upload status
-            const datasetStatus = localStorage.getItem('datasetUploaded');
-            if (datasetStatus === 'true') {
-                setDatasetUploaded(true);
-            }
+            setDatasetUploaded(statusData.data_loaded || false);
 
         } catch (error) {
             console.error('Error fetching app status:', error);
@@ -44,14 +40,27 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     const handleSetDatasetUploaded = (uploaded: boolean) => {
         setDatasetUploaded(uploaded);
-        localStorage.setItem('datasetUploaded', uploaded.toString());
     };
 
-    const clearAll = () => {
-        setDatasetUploaded(false);
-        setModelTrained(false);
-        setDatasetInfo(null);
-        localStorage.removeItem('datasetUploaded');
+    const clearAll = async () => {
+        try {
+            await fetch('http://localhost:8000/reset', { method: 'DELETE' });
+            setDatasetUploaded(false);
+            setModelTrained(false);
+            setDatasetInfo(null);
+            localStorage.removeItem('datasetUploaded');
+        } catch (error) {
+            console.error('Error clearing state:', error);
+        }
+    };
+
+    const deleteModel = async () => {
+        try {
+            await fetch('http://localhost:8000/model', { method: 'DELETE' });
+            setModelTrained(false);
+        } catch (error) {
+            console.error('Error deleting model:', error);
+        }
     };
 
     useEffect(() => {
@@ -69,7 +78,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
             loading,
             refreshStatus,
             setDatasetUploaded: handleSetDatasetUploaded,
-            clearAll
+            clearAll,
+            deleteModel
         }}>
             {children}
         </AppContext.Provider>

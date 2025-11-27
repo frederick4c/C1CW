@@ -24,6 +24,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.staticfiles import StaticFiles
+import os
+
+# Mount Sphinx documentation
+# Check if docs directory exists to avoid errors if docs aren't built
+docs_path = os.path.abspath("../docs/build/html")
+if os.path.exists(docs_path):
+    app.mount("/sphinx", StaticFiles(directory=docs_path, html=True), name="sphinx")
+else:
+    print(f"Warning: Sphinx documentation not found at {docs_path}")
+
 # Health check endpoint
 @app.get("/health")
 async def health_check():
@@ -230,9 +241,8 @@ async def startup_event():
     On app startup, load the model(s) into the global 'models' dict.
     """
     print("--- App Startup ---")
-    # Define the model you want to load
-    # You could load multiple models here
-    models["my_nn_model"] = load_model("saved_model.keras")
+    #potentially load model here   
+    # models["my_nn_model"] = load_model("saved_model.keras")
     print("---------------------")
 
 
@@ -263,8 +273,10 @@ async def get_status():
     Check if the model is loaded and return training status.
     """
     model_loaded = "my_nn_model" in models and models["my_nn_model"] is not None
+    data_loaded = loaded_data["X"] is not None
     return {
         "model_loaded": model_loaded,
+        "data_loaded": data_loaded,
         "model_name": "my_nn_model" if model_loaded else None,
         "training_state": training_state
     }
@@ -366,6 +378,46 @@ async def upload_file(file: UploadFile = File(...)):
     except Exception as e:
         print(f"Error uploading file: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to upload and load data: {str(e)}")
+
+
+@app.delete("/model")
+async def delete_model():
+    """
+    Endpoint to delete the loaded model from memory.
+    """
+    if "my_nn_model" in models:
+        del models["my_nn_model"]
+        
+    # Reset training state
+    training_state["training"] = False
+    training_state["current_epoch"] = 0
+    training_state["total_epochs"] = 0
+    training_state["final_loss"] = None
+    training_state["error"] = None
+    
+    return {"message": "Model deleted successfully."}
+
+
+@app.delete("/reset")
+async def reset_state():
+    """
+    Endpoint to clear all data and models.
+    """
+    # Clear models
+    models.clear()
+    
+    # Clear data
+    loaded_data["X"] = None
+    loaded_data["y"] = None
+    
+    # Reset training state
+    training_state["training"] = False
+    training_state["current_epoch"] = 0
+    training_state["total_epochs"] = 0
+    training_state["final_loss"] = None
+    training_state["error"] = None
+    
+    return {"message": "All state cleared successfully."}
 
 
 # --- Main execution ---

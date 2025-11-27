@@ -85,7 +85,7 @@ export default function Home() {
               Get Started <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>
-          <Link href="http://localhost:8000/docs" target="_blank">
+          <Link href="http://localhost:8000/sphinx" target="_blank">
             <Button variant="outline" size="lg">
               API Docs
             </Button>

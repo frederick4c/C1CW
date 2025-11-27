@@ -5,11 +5,17 @@ import { useAppState } from '@/context/AppContext';
 import { CheckCircle2, XCircle, Database, Brain, Trash2 } from 'lucide-react';
 
 export function StatusBanner() {
-    const { datasetUploaded, modelTrained, loading, clearAll } = useAppState();
+    const { datasetUploaded, modelTrained, loading, clearAll, deleteModel } = useAppState();
 
     const handleClear = () => {
         if (confirm('Are you sure you want to clear all data and model status? This cannot be undone.')) {
             clearAll();
+        }
+    };
+
+    const handleDeleteModel = () => {
+        if (confirm('Are you sure you want to delete the model? This cannot be undone.')) {
+            deleteModel();
         }
     };
 
@@ -60,15 +66,27 @@ export function StatusBanner() {
                     </div>
                 </div>
 
-                {(datasetUploaded || modelTrained) && (
-                    <button
-                        onClick={handleClear}
-                        className="mr-2 px-4 py-2 rounded-xl flex items-center gap-2 text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200"
-                    >
-                        <Trash2 className="w-4 h-4" />
-                        <span className="font-medium">Clear All</span>
-                    </button>
-                )}
+                <div className="flex items-center">
+                    {modelTrained && (
+                        <button
+                            onClick={handleDeleteModel}
+                            className="mr-2 px-4 py-2 rounded-xl flex items-center gap-2 text-amber-500 hover:bg-amber-500/10 transition-all duration-200"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                            <span className="font-medium">Delete Model</span>
+                        </button>
+                    )}
+
+                    {(datasetUploaded || modelTrained) && (
+                        <button
+                            onClick={handleClear}
+                            className="mr-2 px-4 py-2 rounded-xl flex items-center gap-2 text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                            <span className="font-medium">Clear All</span>
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     );
