@@ -1,262 +1,0 @@
-============================= test session starts ==============================
-platform darwin -- Python 3.12.12, pytest-9.0.1, pluggy-1.6.0 -- /Users/fredlawrence/DiS/C1/C1CW/backend/apivenv/bin/python
-cachedir: .pytest_cache
-rootdir: /Users/fredlawrence/DiS/C1/C1CW
-configfile: pytest.ini
-plugins: anyio-4.11.0
-collecting ... collected 1 item
-
-backend/tests/test_api_integration.py::test_full_flow Starting full flow integration test...
-Uploading dataset...
-Upload successful.
-Triggering training...
-Received request to start training job.
-Starting training job with data from data/dummy_dataset.pkl...
-Loading data from data/dummy_dataset.pkl
-Initializing and training FiveDNet...
-Epoch 1/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 520ms/step - loss: 0.6337 - mae: 0.7026[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 93ms/step - loss: 0.5608 - mae: 0.6602 - val_loss: 0.4530 - val_mae: 0.6170
-Epoch 2/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.4379 - mae: 0.5794[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 26ms/step - loss: 0.4508 - mae: 0.5838 - val_loss: 0.3819 - val_mae: 0.5662
-Epoch 3/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.3913 - mae: 0.5399[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.3742 - mae: 0.5205 - val_loss: 0.3248 - val_mae: 0.5201
-Epoch 4/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.2822 - mae: 0.4475[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.3082 - mae: 0.4703 - val_loss: 0.2769 - val_mae: 0.4769
-Epoch 5/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.2552 - mae: 0.4269[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.2615 - mae: 0.4302 - val_loss: 0.2335 - val_mae: 0.4312
-Epoch 6/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.2584 - mae: 0.4293[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.2215 - mae: 0.3904 - val_loss: 0.1973 - val_mae: 0.3846
-Epoch 7/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.1830 - mae: 0.3480[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.1887 - mae: 0.3573 - val_loss: 0.1680 - val_mae: 0.3468
-Epoch 8/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 10ms/step - loss: 0.1628 - mae: 0.3271[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 26ms/step - loss: 0.1658 - mae: 0.3330 - val_loss: 0.1447 - val_mae: 0.3124
-Epoch 9/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.2055 - mae: 0.3840[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.1470 - mae: 0.3122 - val_loss: 0.1285 - val_mae: 0.2806
-Epoch 10/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.1118 - mae: 0.2737[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.1327 - mae: 0.2944 - val_loss: 0.1169 - val_mae: 0.2608
-Epoch 11/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.1228 - mae: 0.2839[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.1204 - mae: 0.2762 - val_loss: 0.1085 - val_mae: 0.2535
-Epoch 12/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0997 - mae: 0.2452[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.1138 - mae: 0.2670 - val_loss: 0.1021 - val_mae: 0.2479
-Epoch 13/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.1370 - mae: 0.2919[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.1068 - mae: 0.2592 - val_loss: 0.0966 - val_mae: 0.2440
-Epoch 14/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 8ms/step - loss: 0.1016 - mae: 0.2587[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.1002 - mae: 0.2512 - val_loss: 0.0917 - val_mae: 0.2393
-Epoch 15/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 11ms/step - loss: 0.1086 - mae: 0.2567[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 29ms/step - loss: 0.0939 - mae: 0.2412 - val_loss: 0.0870 - val_mae: 0.2329
-Epoch 16/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.1069 - mae: 0.2644[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 28ms/step - loss: 0.0890 - mae: 0.2330 - val_loss: 0.0822 - val_mae: 0.2257
-Epoch 17/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 10ms/step - loss: 0.1175 - mae: 0.2748[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 28ms/step - loss: 0.0852 - mae: 0.2276 - val_loss: 0.0777 - val_mae: 0.2220
-Epoch 18/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0885 - mae: 0.2378[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.0800 - mae: 0.2211 - val_loss: 0.0738 - val_mae: 0.2189
-Epoch 19/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 8ms/step - loss: 0.0921 - mae: 0.2333[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.0763 - mae: 0.2154 - val_loss: 0.0703 - val_mae: 0.2155
-Epoch 20/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 10ms/step - loss: 0.0699 - mae: 0.2038[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 27ms/step - loss: 0.0720 - mae: 0.2098 - val_loss: 0.0676 - val_mae: 0.2123
-Epoch 21/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0641 - mae: 0.2034[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 25ms/step - loss: 0.0690 - mae: 0.2045 - val_loss: 0.0655 - val_mae: 0.2088
-Epoch 22/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 11ms/step - loss: 0.0824 - mae: 0.2316[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 32ms/step - loss: 0.0665 - mae: 0.2013 - val_loss: 0.0640 - val_mae: 0.2060
-Epoch 23/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 13ms/step - loss: 0.0758 - mae: 0.2201[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 36ms/step - loss: 0.0643 - mae: 0.1972 - val_loss: 0.0630 - val_mae: 0.2070
-Epoch 24/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 10ms/step - loss: 0.0500 - mae: 0.1749[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 26ms/step - loss: 0.0623 - mae: 0.1934 - val_loss: 0.0625 - val_mae: 0.2078
-Epoch 25/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0702 - mae: 0.2073[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 25ms/step - loss: 0.0608 - mae: 0.1913 - val_loss: 0.0622 - val_mae: 0.2085
-Epoch 26/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 10ms/step - loss: 0.0610 - mae: 0.1869[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.0594 - mae: 0.1891 - val_loss: 0.0620 - val_mae: 0.2091
-Epoch 27/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0592 - mae: 0.1780[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 22ms/step - loss: 0.0583 - mae: 0.1874 - val_loss: 0.0620 - val_mae: 0.2099
-Epoch 28/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0445 - mae: 0.1682[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.0574 - mae: 0.1864 - val_loss: 0.0621 - val_mae: 0.2103
-Epoch 29/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0584 - mae: 0.1769[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 25ms/step - loss: 0.0565 - mae: 0.1853 - val_loss: 0.0623 - val_mae: 0.2111
-Epoch 30/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0650 - mae: 0.1980[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 24ms/step - loss: 0.0557 - mae: 0.1845 - val_loss: 0.0625 - val_mae: 0.2119
-Epoch 31/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 9ms/step - loss: 0.0474 - mae: 0.1756[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.0549 - mae: 0.1835 - val_loss: 0.0626 - val_mae: 0.2127
-Epoch 32/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 8ms/step - loss: 0.0559 - mae: 0.1854[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.0542 - mae: 0.1824 - val_loss: 0.0627 - val_mae: 0.2136
-Epoch 33/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 8ms/step - loss: 0.0591 - mae: 0.1939[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 22ms/step - loss: 0.0534 - mae: 0.1813 - val_loss: 0.0627 - val_mae: 0.2144
-Epoch 34/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 8ms/step - loss: 0.0442 - mae: 0.1685[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 23ms/step - loss: 0.0527 - mae: 0.1803 - val_loss: 0.0629 - val_mae: 0.2154
-Epoch 35/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 8ms/step - loss: 0.0632 - mae: 0.1946[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 37ms/step - loss: 0.0522 - mae: 0.1794 - val_loss: 0.0629 - val_mae: 0.2162
-Epoch 36/50
-[1m1/2[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 13ms/step - loss: 0.0442 - mae: 0.1716[1m2/2[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 28ms/step - loss: 0.0515 - mae: 0.1790 - val_loss: 0.0629 - val_mae: 0.2167
-Model saved to saved_model.keras
-Reloading model with new weights...
-Loading model from saved_model.keras...
-Model loaded successfully.
-Model reloaded and ready.
-Training started.
-Waiting for training...
-Waited 1s...
-Waited 2s...
-Waited 3s...
-Waited 4s...
-Waited 5s...
-Waited 6s...
-Waited 7s...
-Waited 8s...
-Waited 9s...
-Waited 10s...
-Waited 11s...
-Waited 12s...
-Waited 13s...
-Waited 14s...
-Waited 15s...
-Waited 16s...
-Waited 17s...
-Waited 18s...
-Waited 19s...
-Waited 20s...
-Waited 21s...
-Waited 22s...
-Waited 23s...
-Waited 24s...
-Waited 25s...
-Waited 26s...
-Waited 27s...
-Waited 28s...
-Waited 29s...
-Waited 30s...
-Timeout waiting for training to complete.
-Testing prediction...
-Running prediction...
-Input features: [0.5, 0.5, 0.5, 0.5, 0.5]
-Warning: Scaler file not found. Using raw features.
-[1m1/1[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 34ms/step[1m1/1[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 41ms/step
-Prediction complete: 0.1335851401090622
-Prediction result: {'prediction': 0.1335851401090622, 'confidence': 1.0, 'input_data': {'feature_vector': [0.5, 0.5, 0.5, 0.5, 0.5], 'config': {}}}
-FAILED
-
-=================================== FAILURES ===================================
-________________________________ test_full_flow ________________________________
-
-    def test_full_flow():
-        print("Starting full flow integration test...")
-    
-        # 0. Create dummy dataset
-        dataset_path = "dummy_dataset.pkl"
-        create_dummy_dataset(dataset_path)
-    
-        try:
-            # 1. Upload Dataset
-            print("Uploading dataset...")
-            with open(dataset_path, "rb") as f:
-                response = client.post("/upload", files={"file": ("dummy_dataset.pkl", f, "application/octet-stream")})
-    
-            assert response.status_code == 200
-            print("Upload successful.")
-    
-            # 2. Trigger Training
-            print("Triggering training...")
-            # The upload saves to data/dummy_dataset.pkl
-            uploaded_path = "data/dummy_dataset.pkl"
-    
-            response = client.post("/train", params={"data_path": uploaded_path})
-            assert response.status_code == 200
-            print("Training started.")
-    
-            # 3. Wait for training to complete
-            # We can check if 'scaler_params.json' is created/updated as a proxy for completion,
-            # or poll /status.
-            print("Waiting for training...")
-            max_retries = 30
-            training_complete = False
-    
-            # Remove existing scaler if any to ensure we are testing new training
-            if os.path.exists("scaler_params.json"):
-                os.remove("scaler_params.json")
-    
-            for i in range(max_retries):
-                if os.path.exists("scaler_params.json") and os.path.exists("saved_model.keras"):
-                    # Wait a bit more for the reload to finish
-                    time.sleep(2)
-                    training_complete = True
-                    break
-                time.sleep(1)
-                print(f"Waited {i+1}s...")
-    
-            if not training_complete:
-                print("Timeout waiting for training to complete.")
-                # Fail but let's see if we can still predict (maybe it was fast?)
-    
-            # 4. Predict
-            print("Testing prediction...")
-            # 5 features
-            payload = {
-                "feature_vector": [0.5, 0.5, 0.5, 0.5, 0.5],
-                "config": {}
-            }
-            response = client.post("/predict", json=payload)
-    
-            if response.status_code != 200:
-                print(f"Prediction failed: {response.text}")
-    
-            assert response.status_code == 200
-            result = response.json()
-            print(f"Prediction result: {result}")
-            assert "prediction" in result
-            assert isinstance(result["prediction"], float)
-    
-            # Verify scaler was used (we can't easily verify the exact value without mocking,
-            # but we verified the file exists)
->           assert os.path.exists("scaler_params.json")
-E           AssertionError: assert False
-E            +  where False = <function exists at 0x100137e20>('scaler_params.json')
-E            +    where <function exists at 0x100137e20> = <module 'posixpath' (frozen)>.exists
-E            +      where <module 'posixpath' (frozen)> = os.path
-
-backend/tests/test_api_integration.py:93: AssertionError
-=============================== warnings summary ===============================
-backend/main.py:162
-  /Users/fredlawrence/DiS/C1/C1CW/backend/main.py:162: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
-    class PredictionInput(BaseModel):
-
-backend/main.py:198
-  /Users/fredlawrence/DiS/C1/C1CW/backend/main.py:198: DeprecationWarning: 
-          on_event is deprecated, use lifespan event handlers instead.
-  
-          Read more about it in the
-          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
-          
-    @app.on_event("startup")
-
-backend/apivenv/lib/python3.12/site-packages/fastapi/applications.py:4575
-backend/apivenv/lib/python3.12/site-packages/fastapi/applications.py:4575
-  /Users/fredlawrence/DiS/C1/C1CW/backend/apivenv/lib/python3.12/site-packages/fastapi/applications.py:4575: DeprecationWarning: 
-          on_event is deprecated, use lifespan event handlers instead.
-  
-          Read more about it in the
-          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
-          
-    return self.router.on_event(event_type)
-
-backend/main.py:210
-  /Users/fredlawrence/DiS/C1/C1CW/backend/main.py:210: DeprecationWarning: 
-          on_event is deprecated, use lifespan event handlers instead.
-  
-          Read more about it in the
-          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
-          
-    @app.on_event("shutdown")
-
-backend/tests/test_api_integration.py: 14 warnings
-  /Users/fredlawrence/DiS/C1/C1CW/backend/apivenv/lib/python3.12/site-packages/keras/src/backend/tensorflow/core.py:171: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
-    return np.array(x)
-
-backend/tests/test_api_integration.py::test_full_flow
-  /Users/fredlawrence/DiS/C1/C1CW/backend/apivenv/lib/python3.12/site-packages/keras/src/utils/python_utils.py:196: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
-    value = float(value)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-=========================== short test summary info ============================
-FAILED backend/tests/test_api_integration.py::test_full_flow - AssertionError: assert False
- +  where False = <function exists at 0x100137e20>('scaler_params.json')
- +    where <function exists at 0x100137e20> = <module 'posixpath' (frozen)>.exists
- +      where <module 'posixpath' (frozen)> = os.path
-======================= 1 failed, 20 warnings in 37.00s ========================

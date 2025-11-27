@@ -5,16 +5,6 @@ set -euo pipefail
 # Pass-through any additional arguments to `docker compose up`.
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-VENV_PATH="$ROOT_DIR/backend/apivenv/bin/activate"
-
-if [[ ! -f "$VENV_PATH" ]]; then
-  echo "error: expected virtual environment at $VENV_PATH" >&2
-  exit 1
-fi
-
-echo "Activating backend virtual environment..."
-# shellcheck disable=SC1091
-source "$VENV_PATH"
 
 export DOCKER_BUILDKIT=1
 export COMPOSE_DOCKER_CLI_BUILD=1
