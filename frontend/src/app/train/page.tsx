@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/Input";
 import { StatusBanner } from "@/components/StatusBanner";
 import { useAppState } from "@/context/AppContext";
 import { Play, Settings, Activity, ArrowRight, CheckCircle2 } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function TrainPage() {
     const [epochs, setEpochs] = useState(100);
@@ -17,6 +18,7 @@ export default function TrainPage() {
     const [training, setTraining] = useState(false);
     const [status, setStatus] = useState<string | null>(null);
     const [finalLoss, setFinalLoss] = useState<number | null>(null);
+    const [lossHistory, setLossHistory] = useState<any[]>([]);
     const router = useRouter();
     const { datasetUploaded, refreshStatus } = useAppState();
 
@@ -31,6 +33,10 @@ export default function TrainPage() {
                     const data = await res.json();
 
                     if (data.training_state) {
+                        if (data.training_state.loss_history) {
+                            setLossHistory(data.training_state.loss_history);
+                        }
+
                         if (data.training_state.training) {
                             setStatus(`Training in progress... (Epoch ${data.training_state.current_epoch}/${data.training_state.total_epochs})`);
                         } else if (data.training_state.error) {
@@ -64,6 +70,7 @@ export default function TrainPage() {
         setTraining(true);
         setStatus("Initializing training...");
         setFinalLoss(null);
+        setLossHistory([]);
 
         try {
             const response = await fetch("http://localhost:8000/train", {
@@ -157,23 +164,86 @@ export default function TrainPage() {
                     </Card>
 
                     {status && (
-                        <div className={`p-6 rounded-2xl flex items-center gap-4 animate-fade-in ${status.includes("Error")
-                            ? "bg-red-500/10 border border-red-500/20 text-red-400"
-                            : "bg-indigo-500/10 border border-indigo-500/20 text-indigo-400"
-                            }`}>
-                            {training ? (
-                                <Activity className="w-6 h-6 animate-pulse" />
-                            ) : status.includes("complete") ? (
-                                <CheckCircle2 className="w-6 h-6" />
-                            ) : (
-                                <Settings className="w-6 h-6" />
-                            )}
-                            <div>
-                                <p className="font-medium text-lg">{status}</p>
-                                {finalLoss !== null && typeof finalLoss === 'number' && (
-                                    <p className="text-sm opacity-80 mt-1">Final Loss: {finalLoss.toFixed(6)}</p>
+                        <div className="space-y-6 animate-fade-in">
+                            <div className={`p-6 rounded-2xl flex items-center gap-4 ${status.includes("Error")
+                                ? "bg-red-500/10 border border-red-500/20 text-red-400"
+                                : "bg-indigo-500/10 border border-indigo-500/20 text-indigo-400"
+                                }`}>
+                                {training ? (
+                                    <Activity className="w-6 h-6 animate-pulse" />
+                                ) : status.includes("complete") ? (
+                                    <CheckCircle2 className="w-6 h-6" />
+                                ) : (
+                                    <Settings className="w-6 h-6" />
                                 )}
+                                <div className="flex-1">
+                                    <p className="font-medium text-lg">{status}</p>
+                                    {finalLoss !== null && typeof finalLoss === 'number' && (
+                                        <p className="text-sm opacity-80 mt-1">Final Loss: {finalLoss.toFixed(6)}</p>
+                                    )}
+                                </div>
                             </div>
+
+                            {/* Progress Bar */}
+                            {training && (
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-sm text-[var(--text-secondary)]">
+                                        <span>Progress</span>
+                                        <span>{Math.round((lossHistory.length / epochs) * 100)}%</span>
+                                    </div>
+                                    <div className="w-full bg-[var(--surface-highlight)] h-2 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-[var(--primary)] transition-all duration-300 ease-out"
+                                            style={{ width: `${(lossHistory.length / epochs) * 100}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Loss Chart */}
+                            {lossHistory.length > 0 && (
+                                <Card title="Training Loss" className="h-[300px]">
+                                    <div className="w-full h-full -ml-4">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <LineChart data={lossHistory}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.5} />
+                                                <XAxis
+                                                    dataKey="epoch"
+                                                    stroke="var(--text-tertiary)"
+                                                    fontSize={12}
+                                                    tickLine={false}
+                                                    axisLine={false}
+                                                />
+                                                <YAxis
+                                                    stroke="var(--text-tertiary)"
+                                                    fontSize={12}
+                                                    tickLine={false}
+                                                    axisLine={false}
+                                                    domain={['auto', 'auto']}
+                                                />
+                                                <Tooltip
+                                                    contentStyle={{
+                                                        backgroundColor: 'var(--surface)',
+                                                        borderColor: 'var(--border)',
+                                                        borderRadius: '8px',
+                                                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                                                    }}
+                                                    itemStyle={{ color: 'var(--text-primary)' }}
+                                                />
+                                                <Line
+                                                    type="monotone"
+                                                    dataKey="loss"
+                                                    stroke="var(--primary)"
+                                                    strokeWidth={2}
+                                                    dot={false}
+                                                    activeDot={{ r: 4, fill: 'var(--primary)' }}
+                                                    animationDuration={300}
+                                                />
+                                            </LineChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </Card>
+                            )}
                         </div>
                     )}
                 </div>

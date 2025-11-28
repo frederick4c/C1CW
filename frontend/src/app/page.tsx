@@ -69,17 +69,29 @@ export default function Home() {
 
   return (
     // Added 'mx-auto' here to center the main container on the screen
-    <div className="w-full max-w-5xl mx-auto animate-fade-in space-y-16">
+    <div className="w-full max-w-5xl mx-auto animate-fade-in space-y-6 relative">
+      {/* System Status */}
+      <div className="absolute top-0 left-0">
+        <Card className="flex items-center gap-2 px-3 py-1.5 w-auto group border-none shadow-none bg-transparent">
+          <div className={`w-2 h-2 rounded-full ${healthStatus === "healthy" ? "bg-emerald-500 shadow-[0_0_6px_#10B981]" : "bg-red-500"} animate-pulse`} />
+          <div className="flex items-center gap-2">
+            <Server className="w-4 h-4 text-[var(--text-secondary)]" />
+            <span className={`text-xs font-bold ${healthStatus === "healthy" ? "text-emerald-500" : "text-red-500"}`}>
+              {healthStatus === "healthy" ? "API Online" : "API Offline"}
+            </span>
+          </div>
+        </Card>
+      </div>
+
       {/* Hero Section */}
-      <div className="text-center space-y-6 py-12">
-        <h1 className="text-6xl font-bold font-heading tracking-tight">
-          <span className="text-gradient">Fred's</span> <br />
-          <span className="text-gradient-primary">Neural Network</span>
+      <div className="text-center space-y-4 py-6">
+        <h1 className="text-4xl font-bold font-heading tracking-tight">
+          <span className="text-gradient-primary">Home</span>
         </h1>
-        <p className="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
+        <p className="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
           An app for training and applying 5D neural networks.
         </p>
-        <div className="flex items-center justify-center gap-4 pt-4">
+        <div className="flex items-center justify-center gap-4 pt-2">
           <Link href="/upload">
             <Button size="lg" className="shadow-lg shadow-indigo-500/25">
               Get Started <ArrowRight className="w-4 h-4 ml-2" />
@@ -94,39 +106,6 @@ export default function Home() {
       </div>
 
       <StatusBanner />
-
-      {/* System Status */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="flex items-center justify-between group">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-blue-500/10 text-blue-400 group-hover:bg-blue-500/20 transition-colors">
-              <Server className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-[var(--text-secondary)] uppercase tracking-wider">Backend API</h3>
-              <p className={`text-2xl font-bold font-heading ${healthStatus === "healthy" ? "text-emerald-400" : "text-red-400"}`}>
-                {healthStatus === "healthy" ? "Online" : "Offline"}
-              </p>
-            </div>
-          </div>
-          <div className={`w-3 h-3 rounded-full ${healthStatus === "healthy" ? "bg-emerald-500 shadow-[0_0_10px_#10B981]" : "bg-red-500"} animate-pulse`} />
-        </Card>
-
-        <Card className="flex items-center justify-between group">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-purple-500/10 text-purple-400 group-hover:bg-purple-500/20 transition-colors">
-              <Brain className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-[var(--text-secondary)] uppercase tracking-wider">Active Model</h3>
-              <p className={`text-2xl font-bold font-heading ${modelStatus.loaded ? "text-indigo-400" : "text-[var(--text-tertiary)]"}`}>
-                {modelStatus.loaded ? "Ready" : "None"}
-              </p>
-            </div>
-          </div>
-          <div className={`w-3 h-3 rounded-full ${modelStatus.loaded ? "bg-indigo-500 shadow-[0_0_10px_#6366F1]" : "bg-[var(--surface-highlight)]"}`} />
-        </Card>
-      </div>
 
       {/* Features Grid */}
       {/* Added 'max-w-4xl mx-auto' to constrain width and center the grid */}

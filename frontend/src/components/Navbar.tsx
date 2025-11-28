@@ -23,7 +23,7 @@ export function Navbar() {
                         <BrainCircuit className="w-6 h-6" />
                     </div>
                     <span className="text-xl font-bold font-heading tracking-tight text-[var(--text-primary)]">
-                        Neural<span className="text-[var(--secondary)]">Net</span>
+                        Fred's <span className="text-[var(--secondary)]">Neural Network</span>
                     </span>
                 </Link>
 

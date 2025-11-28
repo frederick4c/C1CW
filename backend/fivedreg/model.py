@@ -37,7 +37,7 @@ class FiveDNet:
         model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
         return model
 
-    def fit(self, X, y, validation_split=0.2):
+    def fit(self, X, y, validation_split=0.2, callbacks=None):
         """
         Trains the model on the provided data.
         
@@ -45,6 +45,7 @@ class FiveDNet:
             X (np.ndarray): Feature matrix.
             y (np.ndarray): Target vector.
             validation_split (float): Fraction of data to use for validation.
+            callbacks (list): List of Keras callbacks.
             
         Returns:
             history: Training history.
@@ -60,12 +61,16 @@ class FiveDNet:
             restore_best_weights=True
         )
         
+        final_callbacks = [early_stopping]
+        if callbacks:
+            final_callbacks.extend(callbacks)
+        
         history = self.model.fit(
             X, y,
             epochs=self.max_epochs,
             batch_size=self.batch_size,
             validation_split=validation_split,
-            callbacks=[early_stopping],
+            callbacks=final_callbacks,
             verbose=self.verbose
         )
         

@@ -125,8 +125,20 @@ training_state: Dict[str, Any] = {
     "current_epoch": 0,
     "total_epochs": 0,
     "final_loss": None,
-    "error": None
+    "error": None,
+    "loss_history": []
 }
+
+import tensorflow as tf
+
+class TrainingCallback(tf.keras.callbacks.Callback):
+    def on_epoch_end(self, epoch, logs=None):
+        global training_state
+        logs = logs or {}
+        loss = logs.get('loss')
+        training_state["current_epoch"] = epoch + 1
+        if loss is not None:
+             training_state["loss_history"].append({"epoch": epoch + 1, "loss": float(loss)})
 
 def start_training_job(data_path: str, epochs: int, batch_size: int, learning_rate: float, hidden_size: int):
     """
@@ -139,6 +151,7 @@ def start_training_job(data_path: str, epochs: int, batch_size: int, learning_ra
     training_state["total_epochs"] = epochs
     training_state["final_loss"] = None
     training_state["error"] = None
+    training_state["loss_history"] = []
     
     print(f"Starting training job with data from {data_path}...")
     
@@ -165,18 +178,12 @@ def start_training_job(data_path: str, epochs: int, batch_size: int, learning_ra
         # 3. Initialize and train model
         print("Initializing and training FiveDNet...")
         # Using hidden_size from request
-        model = FiveDNet(hidden_layers=[hidden_size, hidden_size // 2, hidden_size // 4], max_epochs=epochs, learning_rate=learning_rate, verbose=1)
+        model = FiveDNet(hidden_layers=[hidden_size, hidden_size // 2, hidden_size // 4], max_epochs=epochs, learning_rate=learning_rate, verbose=0)
         
-        # Custom callback to update progress
-        class ProgressCallback:
-            def on_epoch_end(self, epoch, loss):
-                training_state["current_epoch"] = epoch + 1
-                
-        # We need to modify FiveDNet to accept callbacks or just simulate progress if not supported
-        # For now, we'll assume fit runs synchronously and we update at the end
-        # Ideally, FiveDNet.fit should yield progress or accept a callback
+        # Instantiate callback
+        callback = TrainingCallback()
         
-        history = model.fit(X_train_scaled, y_train, validation_split=0.2)
+        history = model.fit(X_train_scaled, y_train, validation_split=0.2, callbacks=[callback])
         
         # 4. Save the model
         model_save_path = "saved_model.keras"
@@ -188,7 +195,10 @@ def start_training_job(data_path: str, epochs: int, batch_size: int, learning_ra
         
         # 6. Update state
         training_state["training"] = False
-        training_state["final_loss"] = history[-1] if history else 0.0
+        if history and hasattr(history, 'history') and 'loss' in history.history:
+             training_state["final_loss"] = history.history['loss'][-1]
+        else:
+             training_state["final_loss"] = 0.0
         print(f"Training complete. Final loss: {training_state['final_loss']}")
         
     except Exception as e:
@@ -328,19 +338,33 @@ async def predict(input_data: PredictionInput):
         )
 
 
+class TrainingConfig(BaseModel):
+    epochs: int = 100
+    batch_size: int = 32
+    learning_rate: float = 0.001
+    hidden_size: int = 64
+    data_path: str = "path/to/default/training_data.csv"
+
 @app.post("/train", response_model=TrainingStatus)
 async def train_model(
     background_tasks: BackgroundTasks,
-    data_path: str = "path/to/default/training_data.csv"
+    config: TrainingConfig
 ):
     """
     Endpoint to trigger a model training job.
     This job runs in the background so the API can respond immediately.
     """
-    print("Received request to start training job.")
+    print(f"Received request to start training job with config: {config}")
     
     # Add the long-running task to the background
-    background_tasks.add_task(start_training_job, data_path)
+    background_tasks.add_task(
+        start_training_job, 
+        config.data_path,
+        config.epochs,
+        config.batch_size,
+        config.learning_rate,
+        config.hidden_size
+    )
     
     # Return an immediate response to the client
     return TrainingStatus(
@@ -370,6 +394,8 @@ async def upload_file(file: UploadFile = File(...)):
         
         return {
             "message": f"File '{file.filename}' uploaded and loaded successfully.",
+            "n_samples": X.shape[0],
+            "n_features": X.shape[1],
             "data_shape": {
                 "X": X.shape,
                 "y": y.shape

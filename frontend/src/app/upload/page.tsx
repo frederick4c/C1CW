@@ -97,8 +97,8 @@ export default function UploadPage() {
                     <Card className="relative overflow-hidden">
                         <div
                             className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${file
-                                    ? "border-emerald-500/50 bg-emerald-500/5"
-                                    : "border-[var(--border)] hover:border-[var(--primary)] hover:bg-[var(--surface-highlight)]"
+                                ? "border-emerald-500/50 bg-emerald-500/5"
+                                : "border-[var(--border)] hover:border-[var(--primary)] hover:bg-[var(--surface-highlight)]"
                                 }`}
                             onDragOver={handleDragOver}
                             onDrop={handleDrop}
@@ -154,15 +154,13 @@ export default function UploadPage() {
                         </div>
                     </Card>
 
-                    {status && (
+                    {status && status.type !== 'success' && (
                         <div className={`p-4 rounded-xl flex items-start gap-3 animate-fade-in ${status.type === 'error' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
-                                status.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                                    'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                            'bg-blue-500/10 text-blue-400 border border-blue-500/20'
                             }`}>
                             {status.type === 'error' && <AlertCircle className="w-5 h-5 mt-0.5" />}
-                            {status.type === 'success' && <CheckCircle2 className="w-5 h-5 mt-0.5" />}
                             {status.type === 'info' && <Loader2 className="w-5 h-5 mt-0.5 animate-spin" />}
-                            <div>
+                            <div className="flex-1">
                                 <p className="font-medium">{status.message}</p>
                             </div>
                         </div>
@@ -170,36 +168,25 @@ export default function UploadPage() {
                 </div>
 
                 <div className="space-y-6">
-                    <Card title="Requirements">
-                        <ul className="space-y-3 text-sm text-[var(--text-secondary)]">
-                            <li className="flex items-start gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] mt-2" />
-                                <span>File format must be <strong>.pkl</strong> (Python Pickle)</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] mt-2" />
-                                <span>Must contain a dictionary with keys: <strong>'data'</strong> and <strong>'labels'</strong></span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] mt-2" />
-                                <span>Input data shape: <strong>(N, 5)</strong></span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] mt-2" />
-                                <span>Labels shape: <strong>(N, 1)</strong></span>
-                            </li>
-                        </ul>
-                    </Card>
+                    {datasetInfo ? (
+                        <Card className="animate-fade-in border-emerald-500/30 bg-emerald-500/5">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="p-2 rounded-full bg-emerald-500/20 text-emerald-500">
+                                    <CheckCircle2 className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-[var(--text-primary)]">Upload Successful</h3>
+                                    <p className="text-sm text-[var(--text-secondary)]">Dataset is ready for training</p>
+                                </div>
+                            </div>
 
-                    {datasetInfo && (
-                        <Card title="Dataset Info" className="animate-fade-in border-emerald-500/30">
                             <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="p-3 rounded-lg bg-[var(--surface-highlight)]">
+                                    <div className="p-3 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
                                         <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider">Samples</p>
                                         <p className="text-xl font-bold font-heading text-[var(--text-primary)]">{datasetInfo.n_samples}</p>
                                     </div>
-                                    <div className="p-3 rounded-lg bg-[var(--surface-highlight)]">
+                                    <div className="p-3 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
                                         <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider">Features</p>
                                         <p className="text-xl font-bold font-heading text-[var(--text-primary)]">{datasetInfo.n_features}</p>
                                     </div>
@@ -212,6 +199,27 @@ export default function UploadPage() {
                                     Proceed to Training <ArrowRight className="w-4 h-4 ml-2" />
                                 </Button>
                             </div>
+                        </Card>
+                    ) : (
+                        <Card title="Requirements">
+                            <ul className="space-y-3 text-sm text-[var(--text-secondary)]">
+                                <li className="flex items-start gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] mt-2" />
+                                    <span>File format must be <strong>.pkl</strong> (Python Pickle)</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] mt-2" />
+                                    <span>Must contain a dictionary with keys: <strong>'data'</strong> and <strong>'labels'</strong></span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] mt-2" />
+                                    <span>Input data shape: <strong>(N, 5)</strong></span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] mt-2" />
+                                    <span>Labels shape: <strong>(N, 1)</strong></span>
+                                </li>
+                            </ul>
                         </Card>
                     )}
                 </div>
