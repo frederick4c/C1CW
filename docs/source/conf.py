@@ -2,6 +2,18 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../../backend'))
 
+autodoc_mock_imports = [
+    'numpy',
+    'pandas',
+    'scipy',
+    'matplotlib',
+    'tensorflow',
+    'fastapi',
+    'uvicorn',
+    'pydantic',
+    'python-multipart',
+]
+
 project = "Fred's NeuralNet"
 author = 'Fred Lawrence'
 release = '0.1.0'
