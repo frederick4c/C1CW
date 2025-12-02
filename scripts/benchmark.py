@@ -94,20 +94,40 @@ def profile_prediction(model, n_samples=1000):
 
 def main():
     dataset_sizes = [1000, 5000, 10000]
+    n_iterations = 5
     results = []
     
     for size in dataset_sizes:
-        res, model = profile_training(size)
+        print(f"\n=== Benchmarking size {size} ({n_iterations} iterations) ===")
+        iteration_results = []
+        last_model = None
         
-        # Profile prediction
-        pred_time, pred_peak_mb = profile_prediction(model, n_samples=size)
+        for i in range(n_iterations):
+            print(f"  Iteration {i+1}/{n_iterations}...")
+            res, model = profile_training(size)
+            
+            # Profile prediction
+            pred_time, pred_peak_mb = profile_prediction(model, n_samples=size)
+            res["prediction_time_sec"] = pred_time
+            res["prediction_peak_memory_mb"] = pred_peak_mb
+            
+            iteration_results.append(res)
+            last_model = model
+            
+        # Calculate averages
+        avg_res = {
+            "samples": size,
+            "training_time_sec": np.mean([r["training_time_sec"] for r in iteration_results]),
+            "training_time_std": np.std([r["training_time_sec"] for r in iteration_results]),
+            "peak_memory_mb": np.mean([r["peak_memory_mb"] for r in iteration_results]),
+            "mse": np.mean([r["mse"] for r in iteration_results]),
+            "r2": np.mean([r["r2"] for r in iteration_results]),
+            "prediction_time_sec": np.mean([r["prediction_time_sec"] for r in iteration_results]),
+            "prediction_peak_memory_mb": np.mean([r["prediction_peak_memory_mb"] for r in iteration_results])
+        }
+        results.append(avg_res)
         
-        res["prediction_time_sec"] = pred_time
-        res["prediction_peak_memory_mb"] = pred_peak_mb
-        
-        results.append(res)
-        
-    print("\n--- Summary ---")
+    print("\n--- Summary (Averaged over 5 runs) ---")
     df = pd.DataFrame(results)
     print(df)
     

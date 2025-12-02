@@ -7,7 +7,7 @@ Benchmarking Methodology
 ------------------------
 
 The benchmarking was conducted using synthetic 5D datasets of varying sizes: 1,000, 5,000, and 10,000 samples.
-The tests were run on the local development environment.
+The tests were run on the local development environment. Each test was repeated 5 times, and the mean values are reported.
 
 Metrics recorded:
 *   **Training Time**: Wall-clock time to complete 50 epochs.
@@ -23,11 +23,11 @@ Results
    +-----------+---------------+------------------+--------+--------+
    | Samples   | Training Time | Peak Memory (MB) | MSE    | R2     |
    +===========+===============+==================+========+========+
-   | 1,000     | 4.53s         | 4.19             | 0.0150 | 0.989  |
+   | 1,000     | 4.14s         | 3.33             | 0.0161 | 0.989  |
    +-----------+---------------+------------------+--------+--------+
-   | 5,000     | 6.90s         | 3.18             | 0.0113 | 0.992  |
+   | 5,000     | 5.84s         | 3.19             | 0.0111 | 0.992  |
    +-----------+---------------+------------------+--------+--------+
-   | 10,000    | 6.13s         | 3.21             | 0.0107 | 0.992  |
+   | 10,000    | 7.24s         | 3.32             | 0.0107 | 0.992  |
    +-----------+---------------+------------------+--------+--------+
 
 Scalability Analysis
@@ -41,5 +41,5 @@ Prediction Profiling
 --------------------
 
 Memory usage during prediction was also profiled.
-*   **Prediction Time (10k samples)**: 0.32s
-*   **Peak Memory**: 0.49 MB
+*   **Prediction Time (10k samples)**: 0.34s
+*   **Peak Memory**: 0.50 MB
