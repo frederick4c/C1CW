@@ -6,7 +6,7 @@ set -e
 echo "Building Sphinx documentation..."
 
 # Navigate to project root
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 
 # Activate virtual environment
 if [ -d "backend/apivenv" ]; then

@@ -24,16 +24,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from fastapi.staticfiles import StaticFiles
-import os
 
-# Mount Sphinx documentation
-# Check if docs directory exists to avoid errors if docs aren't built
-docs_path = os.path.abspath("../docs/build/html")
-if os.path.exists(docs_path):
-    app.mount("/sphinx", StaticFiles(directory=docs_path, html=True), name="sphinx")
-else:
-    print(f"Warning: Sphinx documentation not found at {docs_path}")
+
+
 
 # Health check endpoint
 @app.get("/health")

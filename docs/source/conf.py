@@ -12,6 +12,7 @@ autodoc_mock_imports = [
     'uvicorn',
     'pydantic',
     'python-multipart',
+    'sklearn',
 ]
 
 project = "Fred's NeuralNet"

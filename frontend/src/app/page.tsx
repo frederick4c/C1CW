@@ -97,7 +97,7 @@ export default function Home() {
               Get Started <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>
-          <Link href="http://localhost:8000/sphinx" target="_blank">
+          <Link href="https://c1cw-5dneuralnet.readthedocs.io/en/latest/" target="_blank">
             <Button variant="outline" size="lg">
               API Docs
             </Button>

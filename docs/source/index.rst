@@ -9,6 +9,7 @@ Welcome to Fred's NeuralNet documentation!
    usage
    api
    testing
+   performance
 
 Indices and tables
 ==================
