@@ -1,0 +1,33 @@
+[project]
+name = "interpolator-backend"
+version = "0.1.0"
+description = "Backend for the C1 Research Computing Coursework"
+authors = [
+    {name = "Fred", email = "fl482@cam.ac.uk"},
+]
+dependencies = [
+    "fastapi==0.121.0",
+    "uvicorn[standard]==0.38.0",
+    "pydantic==2.12.4",
+    "python-dotenv==1.2.1",
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "pandas",
+    "python-multipart",
+    "tensorflow",
+    "httpx",
+    "scikit-learn",
+]
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "sphinx",
+    "sphinx-rtd-theme",
+]
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"

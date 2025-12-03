@@ -14,19 +14,17 @@ RUN apt-get update && apt-get install -y \
 # Create app directory
 WORKDIR /app
 
-# Copy requirements first for better caching
-COPY requirements.txt .
+# Copy project files
+COPY . .
 
 # Development stage
 FROM base as development
-RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
-COPY . .
+RUN --mount=type=cache,target=/root/.cache/pip pip install -e .
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
 # Production stage
 FROM base as production
-RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
-COPY . .
+RUN --mount=type=cache,target=/root/.cache/pip pip install .
 
 # Create non-root user
 RUN addgroup --system --gid 1001 appgroup && \

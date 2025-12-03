@@ -7,7 +7,7 @@ Benchmarking Methodology
 ------------------------
 
 The benchmarking was conducted using synthetic 5D datasets of varying sizes: 1,000, 5,000, and 10,000 samples.
-The tests were run on the local development environment. Each test was repeated 5 times, and the mean values are reported.
+The tests were run on a 2020 MacBook Air with Apple M1 chip (3.2 GHz). Each test was repeated 5 times, and the mean values are reported.
 
 Metrics recorded:
 *   **Training Time**: Wall-clock time to complete 50 epochs.
