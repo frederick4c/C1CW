@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -14,13 +14,14 @@ export default function TrainPage() {
     const [epochs, setEpochs] = useState(100);
     const [batchSize, setBatchSize] = useState(32);
     const [learningRate, setLearningRate] = useState(0.001);
-    const [hiddenSize, setHiddenSize] = useState(64);
+    const [hiddenLayers, setHiddenLayers] = useState("64, 32, 16");
     const [training, setTraining] = useState(false);
     const [status, setStatus] = useState<string | null>(null);
     const [finalLoss, setFinalLoss] = useState<number | null>(null);
     const [lossHistory, setLossHistory] = useState<any[]>([]);
     const router = useRouter();
     const { datasetUploaded, refreshStatus } = useAppState();
+    const statusRef = useRef<HTMLDivElement>(null);
 
     // Poll for training status
     useEffect(() => {
@@ -54,16 +55,39 @@ export default function TrainPage() {
                 } catch (error) {
                     console.error("Error polling status:", error);
                 }
-            }, 1000);
+            }, 500);
         }
 
         return () => clearInterval(interval);
     }, [training, refreshStatus]);
 
+    // Auto-scroll when chart appears
+    useEffect(() => {
+        if (lossHistory.length > 0 && training) {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+    }, [lossHistory.length, training]);
+
     const handleTrain = async () => {
         if (!datasetUploaded) {
             alert("Please upload a dataset first");
             router.push("/upload");
+            return;
+        }
+
+        // Parse hidden layers
+        let layers: number[] = [];
+        try {
+            layers = hiddenLayers.split(',').map(s => {
+                const val = Number(s.trim());
+                if (isNaN(val) || !Number.isInteger(val) || val <= 0) {
+                    throw new Error("Invalid layer size: " + s.trim());
+                }
+                return val;
+            });
+            if (layers.length === 0) throw new Error("Must specify at least one layer");
+        } catch (e: any) {
+            alert("Invalid hidden layers format. Please use positive integers only (e.g., '64, 32, 16').\nDetails: " + e.message);
             return;
         }
 
@@ -80,7 +104,7 @@ export default function TrainPage() {
                     epochs,
                     batch_size: batchSize,
                     learning_rate: learningRate,
-                    hidden_size: hiddenSize,
+                    hidden_layers: layers,
                 }),
             });
 
@@ -142,12 +166,11 @@ export default function TrainPage() {
                                 max={0.1}
                             />
                             <Input
-                                label="Hidden Layer Size"
-                                type="number"
-                                value={hiddenSize}
-                                onChange={(e) => setHiddenSize(Number(e.target.value))}
-                                min={16}
-                                max={512}
+                                label="Hidden Layers (comma separated)"
+                                type="text"
+                                value={hiddenLayers}
+                                onChange={(e) => setHiddenLayers(e.target.value)}
+                                placeholder="e.g. 64, 32, 16"
                             />
                         </div>
 
@@ -157,6 +180,7 @@ export default function TrainPage() {
                                 isLoading={training}
                                 disabled={!datasetUploaded}
                                 className="w-full md:w-auto shadow-lg shadow-indigo-500/25"
+                                loadingText="Training..."
                             >
                                 <Play className="w-4 h-4 mr-2" /> Start Training
                             </Button>
@@ -164,7 +188,7 @@ export default function TrainPage() {
                     </Card>
 
                     {status && (
-                        <div className="space-y-6 animate-fade-in">
+                        <div ref={statusRef} className="space-y-6 animate-fade-in">
                             <div className={`p-6 rounded-2xl flex items-center gap-4 ${status.includes("Error")
                                 ? "bg-red-500/10 border border-red-500/20 text-red-400"
                                 : "bg-indigo-500/10 border border-indigo-500/20 text-indigo-400"
@@ -202,8 +226,8 @@ export default function TrainPage() {
 
                             {/* Loss Chart */}
                             {lossHistory.length > 0 && (
-                                <Card title="Training Loss" className="h-[300px]">
-                                    <div className="w-full h-full -ml-4">
+                                <Card title="Training Loss" className="h-[400px] flex flex-col">
+                                    <div className="w-full flex-1 min-h-0 -ml-4">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <LineChart data={lossHistory}>
                                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.5} />
@@ -264,8 +288,8 @@ export default function TrainPage() {
                                 Step size at each iteration while moving toward a minimum of a loss function.
                             </div>
                             <div>
-                                <strong className="text-[var(--text-primary)] block mb-1">Hidden Size</strong>
-                                Number of neurons in the hidden layers of the network.
+                                <strong className="text-[var(--text-primary)] block mb-1">Hidden Layers</strong>
+                                Comma-separated list of neurons per layer (e.g., "64, 32, 16").
                             </div>
                         </div>
                     </Card>

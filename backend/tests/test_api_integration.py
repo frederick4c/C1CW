@@ -42,7 +42,12 @@ def test_full_flow():
         # The upload saves to data/dummy_dataset.pkl
         uploaded_path = "data/dummy_dataset.pkl"
         
-        response = client.post("/train", params={"data_path": uploaded_path})
+        training_payload = {
+            "data_path": uploaded_path,
+            "hidden_layers": [32, 16]
+        }
+        
+        response = client.post("/train", json=training_payload)
         assert response.status_code == 200
         print("Training started.")
             # 3. Wait for training to complete

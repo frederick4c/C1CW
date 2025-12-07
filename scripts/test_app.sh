@@ -4,7 +4,7 @@ set -euo pipefail
 # Development script to run backend and frontend locally with hot reload
 # This is much faster than Docker for development!
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VENV_PATH="$ROOT_DIR/backend/apivenv/bin/activate"
 
 # Colors for output
@@ -23,7 +23,7 @@ if [[ ! -f "$VENV_PATH" ]]; then
   cd "$ROOT_DIR/backend"
   python3 -m venv apivenv
   source apivenv/bin/activate
-  pip install -r requirements.txt
+  pip install -e .[dev]
   cd "$ROOT_DIR"
 else
   echo -e "${GREEN}✓ Virtual environment found${NC}"

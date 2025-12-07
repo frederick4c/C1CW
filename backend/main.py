@@ -47,6 +47,12 @@ from fastapi import UploadFile, File
 
 # --- Global Objects ---
 
+# Define base paths
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "saved_model.keras")
+SCALER_PATH = os.path.join(BASE_DIR, "scaler_params.json")
+DATA_DIR = os.path.join(BASE_DIR, "data")
+
 # Dictionary to hold loaded model(s).
 # Loading them into memory at startup is much faster than loading on every request.
 models: Dict[str, Any] = {}
@@ -57,7 +63,7 @@ loaded_data: Dict[str, Any] = {"X": None, "y": None}
 # --- Placeholder Functions ---
 # These are the functions you would replace with your actual model logic.
 
-def load_model(model_path: str) -> Any:
+def load_model(model_path: str = MODEL_PATH) -> Any:
     """
     Loads your neural network model from a file path.
     """
@@ -88,11 +94,10 @@ def run_prediction(model: Any, features: List[float], config: Dict | None) -> fl
     features_arr = np.array(features).reshape(1, -1)
     
     # Load scaler and transform features
-    scaler_path = "scaler_params.json"
-    if os.path.exists(scaler_path):
+    if os.path.exists(SCALER_PATH):
         try:
             scaler = Scaler()
-            scaler.load(scaler_path)
+            scaler.load(SCALER_PATH)
             features_arr = scaler.transform(features_arr)
             print("Features scaled successfully.")
         except Exception as e:
@@ -133,7 +138,7 @@ class TrainingCallback(tf.keras.callbacks.Callback):
         if loss is not None:
              training_state["loss_history"].append({"epoch": epoch + 1, "loss": float(loss)})
 
-def start_training_job(data_path: str, epochs: int, batch_size: int, learning_rate: float, hidden_size: int):
+def start_training_job(data_path: str, epochs: int, batch_size: int, learning_rate: float, hidden_layers: List[int]):
     """
     A long-running function to train or fine-tune a model.
     This runs in the background.
@@ -166,12 +171,12 @@ def start_training_job(data_path: str, epochs: int, batch_size: int, learning_ra
 
         # 2. Prepare data
         X_train, y_train, X_val, y_val, X_test, y_test = split_data(X, y)
-        X_train_scaled, X_val_scaled, X_test_scaled = standardize_data(X_train, X_val, X_test)
+        X_train_scaled, X_val_scaled, X_test_scaled = standardize_data(X_train, X_val, X_test, save_path=SCALER_PATH)
         
         # 3. Initialize and train model
         print("Initializing and training FiveDNet...")
-        # Using hidden_size from request
-        model = FiveDNet(hidden_layers=[hidden_size, hidden_size // 2, hidden_size // 4], max_epochs=epochs, learning_rate=learning_rate, verbose=0)
+        # Using hidden_layers from request
+        model = FiveDNet(hidden_layers=hidden_layers, max_epochs=epochs, learning_rate=learning_rate, verbose=0)
         
         # Instantiate callback
         callback = TrainingCallback()
@@ -179,12 +184,11 @@ def start_training_job(data_path: str, epochs: int, batch_size: int, learning_ra
         history = model.fit(X_train_scaled, y_train, validation_split=0.2, callbacks=[callback])
         
         # 4. Save the model
-        model_save_path = "saved_model.keras"
-        model.save(model_save_path)
-        print(f"Model saved to {model_save_path}")
+        model.save(MODEL_PATH)
+        print(f"Model saved to {MODEL_PATH}")
         
         # 5. Reload the model
-        models["my_nn_model"] = load_model(model_save_path)
+        models["my_nn_model"] = load_model(MODEL_PATH)
         
         # 6. Update state
         training_state["training"] = False
@@ -245,7 +249,8 @@ async def startup_event():
     """
     print("--- App Startup ---")
     #potentially load model here   
-    # models["my_nn_model"] = load_model("saved_model.keras")
+    if os.path.exists(MODEL_PATH):
+        models["my_nn_model"] = load_model(MODEL_PATH)
     print("---------------------")
 
 
@@ -335,7 +340,7 @@ class TrainingConfig(BaseModel):
     epochs: int = 100
     batch_size: int = 32
     learning_rate: float = 0.001
-    hidden_size: int = 64
+    hidden_layers: List[int] = [64, 32, 16]
     data_path: str = "path/to/default/training_data.csv"
 
 @app.post("/train", response_model=TrainingStatus)
@@ -356,7 +361,7 @@ async def train_model(
         config.epochs,
         config.batch_size,
         config.learning_rate,
-        config.hidden_size
+        config.hidden_layers
     )
     
     # Return an immediate response to the client
@@ -373,8 +378,8 @@ async def upload_file(file: UploadFile = File(...)):
     The file is saved and then loaded into memory.
     """
     try:
-        os.makedirs("data", exist_ok=True)
-        file_location = f"data/{file.filename}"
+        os.makedirs(DATA_DIR, exist_ok=True)
+        file_location = os.path.join(DATA_DIR, file.filename)
         with open(file_location, "wb+") as file_object:
             shutil.copyfileobj(file.file, file_object)
             
