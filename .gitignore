@@ -211,3 +211,7 @@ __marimo__/
 
 #instruction
 instructions.md
+
+# Model artifacts
+backend/saved_model.keras
+backend/scaler_params.json

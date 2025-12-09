@@ -24,10 +24,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-
-
-
 # Health check endpoint
 @app.get("/health")
 async def health_check():
@@ -60,8 +56,7 @@ models: Dict[str, Any] = {}
 loaded_data: Dict[str, Any] = {"X": None, "y": None}
 
 
-# --- Placeholder Functions ---
-# These are the functions you would replace with your actual model logic.
+# --- Functions ---
 
 def load_model(model_path: str = MODEL_PATH) -> Any:
     """
