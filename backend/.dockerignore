@@ -12,3 +12,7 @@ __pycache__/
 # Ignore other files
 *.log
 .env
+
+# Model artifacts
+saved_model.keras
+scaler_params.json

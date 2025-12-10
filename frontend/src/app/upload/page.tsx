@@ -17,11 +17,17 @@ export default function UploadPage() {
     const router = useRouter();
     const { refreshStatus } = useAppState();
 
+    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const selectedFile = e.target.files[0];
             if (!selectedFile.name.endsWith(".pkl")) {
                 setStatus({ type: "error", message: "Please upload a .pkl file" });
+                return;
+            }
+            if (selectedFile.size > MAX_FILE_SIZE) {
+                setStatus({ type: "error", message: "File size exceeds 50MB limit" });
                 return;
             }
             setFile(selectedFile);
@@ -72,6 +78,10 @@ export default function UploadPage() {
             const droppedFile = e.dataTransfer.files[0];
             if (!droppedFile.name.endsWith(".pkl")) {
                 setStatus({ type: "error", message: "Please upload a .pkl file" });
+                return;
+            }
+            if (droppedFile.size > MAX_FILE_SIZE) {
+                setStatus({ type: "error", message: "File size exceeds 50MB limit" });
                 return;
             }
             setFile(droppedFile);

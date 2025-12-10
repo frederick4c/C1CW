@@ -75,19 +75,35 @@ export default function TrainPage() {
             return;
         }
 
+        // Validate Hyperparameters
+        if (!Number.isInteger(epochs) || epochs < 1 || epochs > 1000) {
+            alert("Epochs must be an integer between 1 and 1000.");
+            return;
+        }
+        if (!Number.isInteger(batchSize) || batchSize < 1 || batchSize > 512) {
+            alert("Batch Size must be an integer between 1 and 512.");
+            return;
+        }
+        if (learningRate < 0.0001 || learningRate > 1.0) {
+            alert("Learning Rate must be between 0.0001 and 1.0.");
+            return;
+        }
+
         // Parse hidden layers
         let layers: number[] = [];
         try {
-            layers = hiddenLayers.split(',').map(s => {
-                const val = Number(s.trim());
+            const parts = hiddenLayers.split(',').map(s => s.trim()).filter(s => s !== "");
+            if (parts.length === 0) throw new Error("Must specify at least one layer");
+
+            layers = parts.map(s => {
+                const val = Number(s);
                 if (isNaN(val) || !Number.isInteger(val) || val <= 0) {
-                    throw new Error("Invalid layer size: " + s.trim());
+                    throw new Error("Invalid layer size: " + s);
                 }
                 return val;
             });
-            if (layers.length === 0) throw new Error("Must specify at least one layer");
         } catch (e: any) {
-            alert("Invalid hidden layers format. Please use positive integers only (e.g., '64, 32, 16').\nDetails: " + e.message);
+            alert("Invalid hidden layers format. Please use positive integers separated by commas (e.g., '64, 32, 16').\nDetails: " + e.message);
             return;
         }
 

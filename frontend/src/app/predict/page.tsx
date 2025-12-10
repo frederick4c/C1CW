@@ -39,8 +39,8 @@ export default function PredictPage() {
         }
 
         // Validate inputs
-        if (features.some(f => f === "" || isNaN(Number(f)))) {
-            setError("Please enter valid numbers for all features");
+        if (features.some(f => f.trim() === "" || isNaN(Number(f)) || !isFinite(Number(f)))) {
+            setError("Please enter valid finite numbers for all features");
             return;
         }
 
