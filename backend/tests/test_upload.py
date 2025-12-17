@@ -35,14 +35,14 @@ def test_upload_endpoint():
         assert loaded_data["X"].shape == (10, 5)
         
         # Verify file saved
-        assert os.path.exists("backend/data/test_upload.pkl")
+        assert os.path.exists("data/test_upload.pkl")
         
     finally:
         # Cleanup
         if os.path.exists(test_file):
             os.remove(test_file)
-        if os.path.exists("backend/data/test_upload.pkl"):
-            os.remove("backend/data/test_upload.pkl")
+        if os.path.exists("data/test_upload.pkl"):
+            os.remove("data/test_upload.pkl")
 
 if __name__ == "__main__":
     test_upload_endpoint()

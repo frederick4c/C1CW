@@ -293,7 +293,7 @@ export default function TrainPage() {
                         <div className="space-y-4 text-sm text-[var(--text-secondary)]">
                             <div>
                                 <strong className="text-[var(--text-primary)] block mb-1">Epochs</strong>
-                                Number of complete passes through the training dataset.
+                                Number of complete passes through the training dataset. Uses early stopping.
                             </div>
                             <div>
                                 <strong className="text-[var(--text-primary)] block mb-1">Batch Size</strong>

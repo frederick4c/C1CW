@@ -240,13 +240,9 @@ class TrainingStatus(BaseModel):
 @app.on_event("startup")
 async def startup_event():
     """
-    On app startup, load the model(s) into the global 'models' dict.
+    Print that the app has started.
     """
     print("--- App Startup ---")
-    #potentially load model here   
-    if os.path.exists(MODEL_PATH):
-        models["my_nn_model"] = load_model(MODEL_PATH)
-    print("---------------------")
 
 
 @app.on_event("shutdown")
