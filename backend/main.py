@@ -335,10 +335,7 @@ class TrainingConfig(BaseModel):
     data_path: str = "path/to/default/training_data.csv"
 
 @app.post("/train", response_model=TrainingStatus)
-async def train_model(
-    background_tasks: BackgroundTasks,
-    config: TrainingConfig
-):
+async def train_model(background_tasks: BackgroundTasks, config: TrainingConfig):
     """
     Endpoint to trigger a model training job.
     This job runs in the background so the API can respond immediately.
@@ -418,13 +415,10 @@ async def reset_state():
     """
     Endpoint to clear all data and models.
     """
-    # Clear models
     models.clear()
-    
-    # Clear data
     loaded_data["X"] = None
     loaded_data["y"] = None
-    
+
     # Reset training state
     training_state["training"] = False
     training_state["current_epoch"] = 0
@@ -436,11 +430,10 @@ async def reset_state():
 
 
 # --- Main execution ---
-# Run the application if this file is executed directly
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
         port=8000,
-        reload=True  # auto-restarts on code changes
+        reload=True 
     )

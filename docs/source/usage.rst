@@ -23,6 +23,14 @@ The backend provides several endpoints for training and prediction.
 
    GET /health
 
+**Get Status**
+
+.. code-block:: http
+
+   GET /status
+
+Returns the current status of the model (loaded/not loaded), data availability, and training state.
+
 **Upload Dataset**
 
 .. code-block:: http
@@ -50,3 +58,19 @@ Triggers the training process.
    }
 
 Returns the prediction for the given 5D input vector.
+
+**Delete Model**
+
+.. code-block:: http
+
+   DELETE /model
+
+Deletes the currently loaded model from memory.
+
+**Reset State**
+
+.. code-block:: http
+
+   DELETE /reset
+
+Clears all loaded data, models, and training state.

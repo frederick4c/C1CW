@@ -38,7 +38,7 @@ If you prefer to run locally without Docker:
     cd backend
     python -m venv apivenv
     source apivenv/bin/activate
-    pip install -r requirements.txt
+    pip install -e ".[dev]"
     
     # Start the backend (in a new terminal)
     python main.py

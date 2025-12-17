@@ -1,5 +1,8 @@
-Installation
-============
+Local Installation (Development)
+================================
+
+.. note::
+   These instructions are for setting up a local development environment. For a quick start, we recommend using Docker as described in the README.
 
 Prerequisites
 -------------
@@ -27,7 +30,7 @@ Backend Setup
 
    .. code-block:: bash
 
-      pip install -r requirements.txt
+      pip install -e ".[dev]"
 
 Frontend Setup
 --------------
