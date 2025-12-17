@@ -1,12 +1,12 @@
-image: python:3.12
-
 stages:
   - test
 
 test_backend:
   stage: test
   when: manual
+  image: python:3.12
   script:
-    - pip install -r backend/requirements.txt
-    - export PYTHONPATH=$PYTHONPATH:$(pwd)
-    - pytest -s backend/tests
+    - cd backend
+    - pip install ".[dev]"  
+    - export PYTHONPATH=$PYTHONPATH:$(pwd)/..
+    - pytest tests/
